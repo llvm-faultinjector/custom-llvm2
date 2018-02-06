@@ -568,6 +568,9 @@ ModulePass *createNameAnonGlobalPass();
 // used.
 //
 FunctionPass *createLibCallsShrinkWrapPass();
+
+
+FunctionPass *createInterproceduralDependencyCheckPass();
 } // End llvm namespace
 
 #endif
