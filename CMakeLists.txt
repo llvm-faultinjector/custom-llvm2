@@ -891,52 +891,6 @@ if( LLVM_INCLUDE_EXAMPLES )
   add_subdirectory(examples)
 endif()
 
-if( LLVM_INCLUDE_TESTS )
-  if(EXISTS ${LLVM_MAIN_SRC_DIR}/projects/test-suite AND TARGET clang)
-    include(LLVMExternalProjectUtils)
-    llvm_ExternalProject_Add(test-suite ${LLVM_MAIN_SRC_DIR}/projects/test-suite
-      USE_TOOLCHAIN
-      EXCLUDE_FROM_ALL
-      NO_INSTALL
-      ALWAYS_CLEAN)
-  endif()
-  add_subdirectory(test)
-  add_subdirectory(unittests)
-  if( LLVM_INCLUDE_UTILS )
-    add_subdirectory(utils/unittest)
-  endif()
-
-  if (WIN32)
-    # This utility is used to prevent crashing tests from calling Dr. Watson on
-    # Windows.
-    add_subdirectory(utils/KillTheDoctor)
-  endif()
-
-  # Add a global check rule now that all subdirectories have been traversed
-  # and we know the total set of lit testsuites.
-  get_property(LLVM_LIT_TESTSUITES GLOBAL PROPERTY LLVM_LIT_TESTSUITES)
-  get_property(LLVM_LIT_PARAMS GLOBAL PROPERTY LLVM_LIT_PARAMS)
-  get_property(LLVM_LIT_DEPENDS GLOBAL PROPERTY LLVM_LIT_DEPENDS)
-  get_property(LLVM_LIT_EXTRA_ARGS GLOBAL PROPERTY LLVM_LIT_EXTRA_ARGS)
-  get_property(LLVM_ADDITIONAL_TEST_TARGETS
-               GLOBAL PROPERTY LLVM_ADDITIONAL_TEST_TARGETS)
-  get_property(LLVM_ADDITIONAL_TEST_DEPENDS
-               GLOBAL PROPERTY LLVM_ADDITIONAL_TEST_DEPENDS)
-  add_lit_target(check-all
-    "Running all regression tests"
-    ${LLVM_LIT_TESTSUITES}
-    PARAMS ${LLVM_LIT_PARAMS}
-    DEPENDS ${LLVM_LIT_DEPENDS} ${LLVM_ADDITIONAL_TEST_TARGETS}
-    ARGS ${LLVM_LIT_EXTRA_ARGS}
-    )
-  if(TARGET check-runtimes)
-    add_dependencies(check-all check-runtimes)
-  endif()
-  add_custom_target(test-depends
-                    DEPENDS ${LLVM_LIT_DEPENDS} ${LLVM_ADDITIONAL_TEST_DEPENDS})
-  set_target_properties(test-depends PROPERTIES FOLDER "Tests")
-endif()
-
 if (LLVM_INCLUDE_DOCS)
   add_subdirectory(docs)
 endif()
