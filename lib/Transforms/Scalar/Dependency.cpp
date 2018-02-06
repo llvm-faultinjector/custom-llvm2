@@ -1036,9 +1036,9 @@ namespace {
         InstructionDependency *inst_dependency = element.second;
         for (auto& inst : *inst_dependency)
         {
-          ((Value *)(inst.first))->setDependency();
+          inst.first->setDependency();
           if (inst.second)
-            ((Value *)(inst.second))->setMaybeDependency();
+            inst.first->setMaybeDependency();
         }
       }
     }
@@ -1048,7 +1048,6 @@ namespace {
 }
 
 char InterproceduralDependencyCheckPass::ID = 0;
-static RegisterPass<InterproceduralDependencyCheckPass> X("dependency", "DependencyPass");
 
 INITIALIZE_PASS_BEGIN(InterproceduralDependencyCheckPass, "dependency",
   "Dependency Check and Marking Pass", false, false)

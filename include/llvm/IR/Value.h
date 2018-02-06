@@ -119,6 +119,8 @@ protected:
   unsigned HasName : 1;
   unsigned HasHungOffUses : 1;
   unsigned HasDescriptor : 1;
+  unsigned HasDependency : 1;
+  unsigned HasMaybeDependency : 1;
 
 private:
   template <typename UseT> // UseT == 'Use' or 'const Use'
@@ -251,6 +253,11 @@ public:
   bool hasName() const { return HasName; }
   ValueName *getValueName() const;
   void setValueName(ValueName *VN);
+
+  void setDependency() { HasDependency = true; }
+  void setMaybeDependency() { HasMaybeDependency = true; }
+  bool hasDependency() const { return HasDependency; }
+  bool hasMaybeDependency() const { return HasMaybeDependency; }
 
 private:
   void destroyValueName();
