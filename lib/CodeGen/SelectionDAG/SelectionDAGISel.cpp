@@ -1469,7 +1469,6 @@ void SelectionDAGISel::SelectAllBasicBlocks(const Function &Fn) {
       // Do FastISel on as many instructions as possible.
       for (; BI != Begin; --BI) {
         const Instruction *Inst = &*std::prev(BI);
-        errs() << "(" << Fn.getName() << ")" <<*Inst << "\n";
 
         // If we no longer require this instruction, skip it.
         if (isFoldedOrDeadInstruction(Inst, FuncInfo) ||
