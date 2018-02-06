@@ -1056,6 +1056,12 @@ SDValue SelectionDAGBuilder::getCopyFromRegs(const Value *V, Type *Ty) {
     resolveDanglingDebugInfo(V, Result);
   }
 
+  if (V->hasDependency()) {
+    Result.setDominated();
+    if (V->hasMaybeDependency())
+      Result.setMaybe();
+  }
+
   return Result;
 }
 
