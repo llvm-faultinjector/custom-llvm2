@@ -468,6 +468,19 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     DiagnosticInfoISelFallback DiagFallback(Fn);
     Fn.getContext().diagnose(DiagFallback);
   }
+  MF->print(errs());
+  /*errs() << "s\n";
+  for (MachineBasicBlock &MBB : mf) {
+    for (MachineInstr& I : MBB) {
+      for (MachineInstr::mmo_iterator i = I.memoperands_begin(), 
+        e = I.memoperands_end();
+        i != e; ++i) {
+        if (const Value *V = (*i)->getValue())
+          errs() << *V << "\n";
+      }
+    }
+  }
+  errs() << "\n";*/
 
   // If the first basic block in the function has live ins that need to be
   // copied into vregs, emit the copies into the top of the block before
