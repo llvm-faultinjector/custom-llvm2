@@ -87,7 +87,9 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/Target/TargetRegisterInfo.h"
 #include "llvm/Target/TargetSubtargetInfo.h"
+#include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+#include "llvm/CS.h"
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
@@ -463,10 +465,30 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     // This performs initialization so lowering for SplitCSR will be correct.
     TLI->initializeSplitCSR(EntryMBB);
 
+  FunctionPass *c = createInterproceduralDependencyCheckPass();
+  c->runOnFunction(const_cast<Function&>(Fn));
+  for (auto& BB : Fn)
+    for (auto& I : BB) {
+      if (I.getDebugLoc())
+        errs() << I << "(" << (signed)I.getDebugLoc().getLine() << ")\n";
+    }
+
   SelectAllBasicBlocks(Fn);
   if (FastISelFailed && EnableFastISelFallbackReport) {
     DiagnosticInfoISelFallback DiagFallback(Fn);
     Fn.getContext().diagnose(DiagFallback);
+  }
+
+  errs() << "Function: " << mf.getName() << "\n";
+  for (MachineBasicBlock &MBB : mf) {
+    errs() << "    BB# " << MBB.getName() << "\n";
+    for (MachineInstr& I : MBB) {
+      if (I.getDebugLoc())
+        errs() << "    (" << (signed)I.getDebugLoc().getLine() << ")" << I;
+      else
+        errs() <<  "        " << I;
+    }
+    errs() << "\n";
   }
 
   // If the first basic block in the function has live ins that need to be
@@ -623,6 +645,17 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
   DEBUG(dbgs() << "*** MachineFunction at end of ISel ***\n");
   DEBUG(MF->print(dbgs()));
 
+  errs() << "Function: " << mf.getName() << "\n";
+  for (MachineBasicBlock &MBB : mf) {
+    errs() << "    BB# " << MBB.getName() << "\n";
+    for (MachineInstr& I : MBB) {
+      if (I.getDebugLoc())
+        errs() << "    (" << (signed)I.getDebugLoc().getLine() << ")" << I;
+      else
+        errs() << "        " << I;
+    }
+    errs() << "\n";
+  }
   return true;
 }
 
@@ -1362,6 +1395,9 @@ void SelectionDAGISel::SelectAllBasicBlocks(const Function &Fn) {
   FastISel *FastIS = nullptr;
   if (TM.Options.EnableFastISel)
     FastIS = TLI->createFastISel(*FuncInfo, LibInfo);
+
+  if (!FastIS)
+    errs() << "FastIS is denied in '" << Fn.getName() << "' function.\n";
 
   setupSwiftErrorVals(Fn, TLI, FuncInfo);
 

@@ -1961,7 +1961,7 @@ void MachineInstr::print(raw_ostream &OS, ModuleSlotTracker &MST,
       case InlineAsm::Kind_Mem:                OS << ":[mem"; break;
       default: OS << ":[??" << InlineAsm::getKind(Flag); break;
       }
-
+      
       unsigned RCID = 0;
       if (!InlineAsm::isImmKind(Flag) && !InlineAsm::isMemKind(Flag) &&
           InlineAsm::hasRegClassConstraint(Flag, RCID)) {
@@ -2088,12 +2088,13 @@ void MachineInstr::print(raw_ostream &OS, ModuleSlotTracker &MST,
       OS << " indirect";
   } else if (SkipDebugLoc) {
     return;
-  } else if (debugLoc && MF) {
+  }
+  /*} else if (debugLoc && MF) {
     if (!HaveSemi)
       OS << ";";
     OS << " dbg:";
     debugLoc.print(OS);
-  }
+  }*/
 
   OS << '\n';
 }

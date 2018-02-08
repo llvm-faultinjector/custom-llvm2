@@ -51,6 +51,8 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetSubtargetInfo.h"
 #include "llvm/Transforms/Utils/Cloning.h"
+
+#include "llvm/LinkAllPasses.h"
 #include <memory>
 using namespace llvm;
 
@@ -420,8 +422,9 @@ static int compileModule(char **argv, LLVMContext &Context) {
       MIR = createMIRParserFromFile(InputFilename, Err, Context);
       if (MIR)
         M = MIR->parseIRModule();
-    } else
+    } else {
       M = parseIRFile(InputFilename, Err, Context);
+    }
     if (!M) {
       Err.print(argv[0], errs());
       return 1;

@@ -129,9 +129,18 @@ class SDValue {
   SDNode *Node = nullptr; // The node defining the value we are using.
   unsigned ResNo = 0;     // Which return value of the node we are using.
 
+  unsigned dpc_dominated : 1;
+  unsigned dpc_maybe : 1;
+
 public:
   SDValue() = default;
   SDValue(SDNode *node, unsigned resno);
+  
+  void setDominated() { dpc_dominated = true; }
+  bool getDominated() const { return dpc_dominated; }
+
+  void setMaybe() { dpc_maybe = true; }
+  bool getMaybe() const { return dpc_maybe; }
 
   /// get the index which selects a specific result in the SDNode
   unsigned getResNo() const { return ResNo; }
@@ -1030,7 +1039,7 @@ public:
 // Define inline functions from the SDValue class.
 
 inline SDValue::SDValue(SDNode *node, unsigned resno)
-    : Node(node), ResNo(resno) {
+    : Node(node), ResNo(resno), dpc_dominated(true), dpc_maybe(true) {
   // Explicitly check for !ResNo to avoid use-after-free, because there are
   // callers that use SDValue(N, 0) with a deleted N to indicate successful
   // combines.
