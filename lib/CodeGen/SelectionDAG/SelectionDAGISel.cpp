@@ -87,6 +87,7 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/Target/TargetRegisterInfo.h"
 #include "llvm/Target/TargetSubtargetInfo.h"
+#include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include <algorithm>
 #include <cassert>
@@ -463,24 +464,28 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     // This performs initialization so lowering for SplitCSR will be correct.
     TLI->initializeSplitCSR(EntryMBB);
 
+  FunctionPass *c = createInterproceduralDependencyCheckPass();
+  c->runOnFunction(const_cast<Function&> (Fn));
+
   SelectAllBasicBlocks(Fn);
   if (FastISelFailed && EnableFastISelFallbackReport) {
     DiagnosticInfoISelFallback DiagFallback(Fn);
     Fn.getContext().diagnose(DiagFallback);
   }
   //MF->print(errs());
-  /*errs() << "s\n";
+  errs() << "s\n";
   for (MachineBasicBlock &MBB : mf) {
     for (MachineInstr& I : MBB) {
-      for (MachineInstr::mmo_iterator i = I.memoperands_begin(), 
+      //errs() << I << "(" << I.getDebugLoc().getDependency() << ")\n";
+      /*for (MachineInstr::mmo_iterator i = I.memoperands_begin(), 
         e = I.memoperands_end();
         i != e; ++i) {
         if (const Value *V = (*i)->getValue())
           errs() << *V << "\n";
-      }
+      }*/
     }
   }
-  errs() << "\n";*/
+  errs() << "\n";
 
   // If the first basic block in the function has live ins that need to be
   // copied into vregs, emit the copies into the top of the block before

@@ -987,6 +987,9 @@ namespace {
   struct InterproceduralDependencyCheckPass : public FunctionPass 
   {
     static char ID;
+    //LLVMContext lc;
+    //MDNode *mdn;
+    //ArrayRef<Metadata *> d;
     
     DependencyMap *dependency_map;
     DependencyMap *annotated_map;
@@ -998,6 +1001,7 @@ namespace {
       initializeInterproceduralDependencyCheckPassPass(*PassRegistry::getPassRegistry());
       dependency_map = new DependencyMap();
       annotated_map = new DependencyMap();
+      //mdn = MDNode::get(lc, nullptr);
     }
 
     ~InterproceduralDependencyCheckPass()
@@ -1037,8 +1041,13 @@ namespace {
         for (auto& inst : *inst_dependency)
         {
           inst.first->setDependency();
-          if (!inst.second)
+          //inst.first->setDebugLoc(DebugLoc::get(-1, -1, mdn));
+          //errs() << inst.first->getDebugLoc().getLine() << "(P)\n";
+          if (!inst.second) {
+            //inst.first->setDebugLoc(DebugLoc::get(-2, -2, mdn));
             inst.first->setMaybeDependency();
+            //errs() << inst.first->getDebugLoc().getLine() << "(M)\n";
+          }
         }
       }
     }
@@ -1053,7 +1062,10 @@ INITIALIZE_PASS_BEGIN(InterproceduralDependencyCheckPass, "dependency",
   "Dependency Check and Marking Pass", false, false)
 INITIALIZE_PASS_END(InterproceduralDependencyCheckPass, "dependency",
     "Dependency Check and Marking Pass", false, false)
+ 
+static FunctionPass *c = nullptr;
 
 FunctionPass *llvm::createInterproceduralDependencyCheckPass() {
-  return new InterproceduralDependencyCheckPass();
+  if (c) return c;
+  return c = new InterproceduralDependencyCheckPass();
 }

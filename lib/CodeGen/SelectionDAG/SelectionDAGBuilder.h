@@ -663,6 +663,11 @@ public:
     SDValue &N = NodeMap[V];
     assert(!N.getNode() && "Already set a value for this node!");
     N = NewN;
+    if (V->hasDependency()) {
+      N.setDominated();
+      if (V->hasMaybeDependency())
+        N.setMaybe();
+    }
   }
 
   void setUnusedArgValue(const Value *V, SDValue NewN) {
