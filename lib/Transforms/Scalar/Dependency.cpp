@@ -19,6 +19,8 @@
 #include "llvm/Analysis/LoopInfo.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/LinkAllPasses.h"
+#include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/CS.h"
 #include <stack>
 
 #define DEBUG_TYPE "dependency-check"
@@ -987,6 +989,8 @@ namespace {
   struct InterproceduralDependencyCheckPass : public FunctionPass 
   {
     static char ID;
+    LLVMContext cnt;
+    MDNode *md;
     
     DependencyMap *dependency_map;
     DependencyMap *annotated_map;
@@ -998,6 +1002,7 @@ namespace {
       initializeInterproceduralDependencyCheckPassPass(*PassRegistry::getPassRegistry());
       dependency_map = new DependencyMap();
       annotated_map = new DependencyMap();
+      md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
     }
 
     ~InterproceduralDependencyCheckPass()
@@ -1037,8 +1042,11 @@ namespace {
         for (auto& inst : *inst_dependency)
         {
           inst.first->setDependency();
-          if (!inst.second)
+          inst.first->setDebugLoc(DebugLoc::get(-2, (uint16_t)-2, md));
+          if (!inst.second) {
             inst.first->setMaybeDependency();
+            inst.first->setDebugLoc(DebugLoc::get(-1, (uint16_t)-1, md));
+          }
         }
       }
     }
@@ -1054,6 +1062,10 @@ INITIALIZE_PASS_BEGIN(InterproceduralDependencyCheckPass, "dependency",
 INITIALIZE_PASS_END(InterproceduralDependencyCheckPass, "dependency",
     "Dependency Check and Marking Pass", false, false)
 
+FunctionPass *myPass = nullptr;
+
 FunctionPass *llvm::createInterproceduralDependencyCheckPass() {
-  return new InterproceduralDependencyCheckPass();
+  if (myPass == nullptr)
+    myPass = new InterproceduralDependencyCheckPass();
+  return myPass;
 }

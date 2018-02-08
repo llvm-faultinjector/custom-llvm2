@@ -87,7 +87,9 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/Target/TargetRegisterInfo.h"
 #include "llvm/Target/TargetSubtargetInfo.h"
+#include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+#include "llvm/CS.h"
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
@@ -463,24 +465,31 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     // This performs initialization so lowering for SplitCSR will be correct.
     TLI->initializeSplitCSR(EntryMBB);
 
+  FunctionPass *c = createInterproceduralDependencyCheckPass();
+  c->runOnFunction(const_cast<Function&>(Fn));
+  for (auto& BB : Fn)
+    for (auto& I : BB) {
+      if (I.getDebugLoc())
+        errs() << I << "(" << (signed)I.getDebugLoc().getLine() << ")\n";
+    }
+
   SelectAllBasicBlocks(Fn);
   if (FastISelFailed && EnableFastISelFallbackReport) {
     DiagnosticInfoISelFallback DiagFallback(Fn);
     Fn.getContext().diagnose(DiagFallback);
   }
-  //MF->print(errs());
-  /*errs() << "s\n";
+
+  errs() << "Function: " << mf.getName() << "\n";
   for (MachineBasicBlock &MBB : mf) {
+    errs() << "    BB# " << MBB.getName() << "\n";
     for (MachineInstr& I : MBB) {
-      for (MachineInstr::mmo_iterator i = I.memoperands_begin(), 
-        e = I.memoperands_end();
-        i != e; ++i) {
-        if (const Value *V = (*i)->getValue())
-          errs() << *V << "\n";
-      }
+      if (I.getDebugLoc())
+        errs() << "    (" << (signed)I.getDebugLoc().getLine() << ")" << I;
+      else
+        errs() <<  "        " << I;
     }
+    errs() << "\n";
   }
-  errs() << "\n";*/
 
   // If the first basic block in the function has live ins that need to be
   // copied into vregs, emit the copies into the top of the block before
@@ -636,6 +645,17 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
   DEBUG(dbgs() << "*** MachineFunction at end of ISel ***\n");
   DEBUG(MF->print(dbgs()));
 
+  errs() << "Function: " << mf.getName() << "\n";
+  for (MachineBasicBlock &MBB : mf) {
+    errs() << "    BB# " << MBB.getName() << "\n";
+    for (MachineInstr& I : MBB) {
+      if (I.getDebugLoc())
+        errs() << "    (" << (signed)I.getDebugLoc().getLine() << ")" << I;
+      else
+        errs() << "        " << I;
+    }
+    errs() << "\n";
+  }
   return true;
 }
 

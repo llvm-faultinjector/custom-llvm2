@@ -424,11 +424,6 @@ static int compileModule(char **argv, LLVMContext &Context) {
         M = MIR->parseIRModule();
     } else {
       M = parseIRFile(InputFilename, Err, Context);
-      FunctionPass *c = createInterproceduralDependencyCheckPass();
-      for (Function& F : M->functions()) {
-        errs() << F.getName() << "\n";
-        c->runOnFunction(F);
-      }
     }
     if (!M) {
       Err.print(argv[0], errs());

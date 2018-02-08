@@ -2088,12 +2088,13 @@ void MachineInstr::print(raw_ostream &OS, ModuleSlotTracker &MST,
       OS << " indirect";
   } else if (SkipDebugLoc) {
     return;
-  } else if (debugLoc && MF) {
+  }
+  /*} else if (debugLoc && MF) {
     if (!HaveSemi)
       OS << ";";
     OS << " dbg:";
     debugLoc.print(OS);
-  }
+  }*/
 
   OS << '\n';
 }

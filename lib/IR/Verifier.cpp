@@ -835,8 +835,8 @@ static bool isScope(const Metadata *MD) { return !MD || isa<DIScope>(MD); }
 static bool isDINode(const Metadata *MD) { return !MD || isa<DINode>(MD); }
 
 void Verifier::visitDILocation(const DILocation &N) {
-  AssertDI(N.getRawScope() && isa<DILocalScope>(N.getRawScope()),
-           "location requires a valid scope", &N, N.getRawScope());
+  //AssertDI(N.getRawScope() && isa<DILocalScope>(N.getRawScope()),
+  //         "location requires a valid scope", &N, N.getRawScope());
   if (auto *IA = N.getRawInlinedAt())
     AssertDI(isa<DILocation>(IA), "inlined-at should be a location", &N, IA);
 }
