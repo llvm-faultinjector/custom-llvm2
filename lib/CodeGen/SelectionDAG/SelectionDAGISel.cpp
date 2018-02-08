@@ -468,7 +468,7 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     DiagnosticInfoISelFallback DiagFallback(Fn);
     Fn.getContext().diagnose(DiagFallback);
   }
-  MF->print(errs());
+  //MF->print(errs());
   /*errs() << "s\n";
   for (MachineBasicBlock &MBB : mf) {
     for (MachineInstr& I : MBB) {
@@ -1375,6 +1375,9 @@ void SelectionDAGISel::SelectAllBasicBlocks(const Function &Fn) {
   FastISel *FastIS = nullptr;
   if (TM.Options.EnableFastISel)
     FastIS = TLI->createFastISel(*FuncInfo, LibInfo);
+
+  if (!FastIS)
+    errs() << "FastIS is denied in '" << Fn.getName() << "' function.\n";
 
   setupSwiftErrorVals(Fn, TLI, FuncInfo);
 
