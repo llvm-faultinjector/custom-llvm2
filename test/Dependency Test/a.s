@@ -17,20 +17,21 @@
 	pushl	%esi
 	pushl	%eax
 	movl	16(%esp), %esi
-	testl	%esi, %esi              # Dominated
+	testl	%esi, %esi              # [Dominated, Source: a]
 	jle	LBB0_3
 # BB#1:                                 # %for.body.lr.ph
-	movl	(%esp), %eax            # Dominated
+	movl	(%esp), %eax            # [Dominated, Source: a]
 	movl	%esi, %edi
 	.p2align	4, 0x90
 LBB0_2:                                 # %for.body
                                         # =>This Inner Loop Header: Depth=1
-	addl	%esi, %eax              # Dominated
-	pushl	%eax                    # Dominated
-	calll	"?foo_called@@YAHH@Z"   # Dominated
-	addl	$4, %esp                # Dominated
-	addl	(%esp), %eax            # Dominated
-	decl	%edi                    # Maybe
+	addl	%esi, %eax              # [Dominated, Source: a]
+	pushl	%eax                    # [Dominated, Source: a]
+	calll	"?foo_called@@YAHH@Z"   # [Dominated, Source: a]
+	addl	$4, %esp                # [Dominated, Source: a]
+	addl	(%esp), %eax            # [Annotated, Source: a]
+                                        # [Dominated, Source: a]
+	decl	%edi                    # [Maybe, Source: a]
 	movl	%eax, (%esp)
 	jne	LBB0_2
 LBB0_3:                                 # %for.cond.cleanup

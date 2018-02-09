@@ -20,7 +20,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/LinkAllPasses.h"
 #include "llvm/IR/DebugInfoMetadata.h"
-#include "llvm/CS.h"
+#include "llvm/DependencyInfo.h"
 #include <stack>
 
 #define DEBUG_TYPE "dependency-check"
@@ -50,6 +50,40 @@ using namespace llvm;
 */
 
 namespace {
+
+  static LLVMContext cnt;
+  static MDNode *md;
+
+  class DependencyDebugLocHelper
+  {
+  public:
+
+    static void Initialize()
+    {
+      md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
+    }
+
+    static DebugLoc getDebugLoc(DependencyInstrInfoManager *info)
+    {
+      return DebugLoc::get(reinterpret_cast<unsigned> (info), (uint16_t)-1, md);
+    }
+
+    static void setDebugLoc(Instruction *I, Value *S,
+      DependencyInstrInfo::DependencyInstrType T)
+    {
+      DependencyInstrInfoManager *mgr;
+      if (I->getDebugLoc()) {
+        mgr = reinterpret_cast<DependencyInstrInfoManager *>
+          (I->getDebugLoc()->getLine());
+      } else {
+        mgr = new DependencyInstrInfoManager();
+        I->setDebugLoc(getDebugLoc(mgr));
+      }
+
+      mgr->addInfo(new DependencyInstrInfo(I, S, T));
+    }
+
+  };
 
   static const char *llvm_annotate_variable = "llvm.var.annotation";
   
@@ -676,6 +710,7 @@ namespace {
   /// This class must be called only once by each target-function.
   class BottomUpDependencyChecker
   {
+    Value *value;
     Function *function;
     DependencyMap *dependency_map;
     FunctionDependency *function_dependency;
@@ -690,6 +725,7 @@ namespace {
     {
       for (Value *value : V)
       {
+        this->value = value;
         inst_dependency = new InstructionDependency();
         runSearch(value, true, true);
         IDM->addDependency(value, inst_dependency);
@@ -710,6 +746,9 @@ namespace {
           errs() << "    (" << function->getName() << ")" << *inst << "\n";
 #endif
 
+        DependencyDebugLocHelper::setDebugLoc(inst, this->value, 
+          P ? DependencyInstrInfo::Dominated : DependencyInstrInfo::Maybe);
+        
         inst_dependency->addInstruction(inst, P);
 
         if (PHINode *phi = dyn_cast<PHINode> (inst)) {
@@ -788,7 +827,9 @@ namespace {
         for (Instruction& inst : basic_block) {
           if (StoreInst *si = dyn_cast<StoreInst> (&inst))
           {
-            if (si->getPointerOperand() == V) {
+            if (si->getPointerOperand() == V && ROOT) {
+              if (Instruction* I = dyn_cast<Instruction> (si->getValueOperand()))
+                DependencyDebugLocHelper::setDebugLoc(I, V, DependencyInstrInfo::Annotated);
               runBottomUp(si->getValueOperand(), P && ROOT);
               runSearch(si->getValueOperand(), P && ROOT);
             }
@@ -989,8 +1030,8 @@ namespace {
   struct InterproceduralDependencyCheckPass : public FunctionPass 
   {
     static char ID;
-    LLVMContext cnt;
-    MDNode *md;
+    //LLVMContext cnt;
+    //MDNode *md;
     
     DependencyMap *dependency_map;
     DependencyMap *annotated_map;
@@ -1002,7 +1043,8 @@ namespace {
       initializeInterproceduralDependencyCheckPassPass(*PassRegistry::getPassRegistry());
       dependency_map = new DependencyMap();
       annotated_map = new DependencyMap();
-      md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
+      //md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
+      DependencyDebugLocHelper::Initialize();
     }
 
     ~InterproceduralDependencyCheckPass()
@@ -1042,10 +1084,10 @@ namespace {
         for (auto& inst : *inst_dependency)
         {
           inst.first->setDependency();
-          inst.first->setDebugLoc(DebugLoc::get(-2, (uint16_t)-2, md));
+          //inst.first->setDebugLoc(DebugLoc::get(-2, (uint16_t)-2, md));
           if (!inst.second) {
             inst.first->setMaybeDependency();
-            inst.first->setDebugLoc(DebugLoc::get(-1, (uint16_t)-1, md));
+            //inst.first->setDebugLoc(DebugLoc::get(-1, (uint16_t)-1, md));
           }
         }
       }
