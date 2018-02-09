@@ -19,6 +19,7 @@
 #include "X86AsmPrinter.h"
 #include "X86RegisterInfo.h"
 #include "X86ShuffleDecodeConstantPool.h"
+#include "llvm/DependencyInfo.h"
 #include "llvm/ADT/Optional.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/iterator_range.h"
@@ -1361,6 +1362,14 @@ static void printConstant(const Constant *COp, raw_ostream &CS) {
 void X86AsmPrinter::EmitInstruction(const MachineInstr *MI) {
   X86MCInstLower MCInstLowering(*MF, *this);
   const X86RegisterInfo *RI = MF->getSubtarget<X86Subtarget>().getRegisterInfo();
+
+  if (MI->getDebugLoc()) {
+    DependencyInstrInfoManager *mgr = reinterpret_cast<DependencyInstrInfoManager *>
+      (MI->getDebugLoc()->getLine());
+    mgr->doFolding();
+    for (auto DI : *mgr)
+      OutStreamer->AddComment(DI->getInfo());
+  }
 
   // Add a comment about EVEX-2-VEX compression for AVX-512 instrs that
   // are compressed from EVEX encoding to VEX encoding.
