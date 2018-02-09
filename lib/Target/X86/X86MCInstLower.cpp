@@ -1364,12 +1364,9 @@ void X86AsmPrinter::EmitInstruction(const MachineInstr *MI) {
   const X86RegisterInfo *RI = MF->getSubtarget<X86Subtarget>().getRegisterInfo();
 
   if (MI->getDebugLoc()) {
-    /*if ((signed)MI->getDebugLoc().getLine() == -1)
-      OutStreamer->AddComment("Maybe");
-    else if ((signed)MI->getDebugLoc().getLine() == -2)
-      OutStreamer->AddComment("Dominated");*/
     DependencyInstrInfoManager *mgr = reinterpret_cast<DependencyInstrInfoManager *>
       (MI->getDebugLoc()->getLine());
+    mgr->doFolding();
     for (auto DI : *mgr)
       OutStreamer->AddComment(DI->getInfo());
   }

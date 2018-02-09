@@ -22,37 +22,42 @@ namespace llvm {
 
     typedef enum {
       Annotated = 0,
-      Dominated = 1,
-      Maybe = 2,
+      Perpect = 1,
+      Dominated = 2,
+      Maybe = 3,
     } DependencyInstrType;
 
     DependencyInstrInfo(Instruction *I, Value *S,
-      DependencyInstrType T)
-      : target(I), type(T), source(S)
-    {
-    }
+      DependencyInstrType T) : target(I), type(T), source(S) { }
 
-    Instruction *getInstruction() const
-    {
+    Instruction *getInstruction() const {
       return target;
     }
 
-    Value *getSource() const
-    {
+    Value *getSource() const {
       return source;
     }
 
-    DependencyInstrType getType() const
-    {
+    void setSource(Value *source) {
+      this->source = source;
+    }
+
+    DependencyInstrType getType() const {
       return type;
     }
 
-    std::string getInfo() const
+    void setType(DependencyInstrType type) {
+      this->type = type;
+    }
+
+    std::string getInfo() const 
     {
       std::string ret;
       ret.push_back('[');
       if (type == DependencyInstrType::Annotated)
         ret.append("Annotated");
+      else if (type == DependencyInstrType::Perpect)
+        ret.append("Perpect");
       else if (type == DependencyInstrType::Dominated)
         ret.append("Dominated");
       else
@@ -76,18 +81,37 @@ namespace llvm {
     InfoType vec;
   public:
 
-    void addInfo(DependencyInstrInfo *info)
-    {
+    bool Verify() const {
+
+    }
+
+    void doFolding() {
+      InfoType tmp;
+      for (auto DI : vec) {
+        for (auto TDI : tmp) {
+          if (TDI->getSource() == DI->getSource()) {
+            if ((unsigned)DI->getType() < (unsigned)TDI->getType()) {
+              TDI->setType(DI->getType());
+            }
+            goto NEXT;
+          }
+        }
+        tmp.push_back(DI);
+      NEXT:
+        ;
+      }
+      vec = tmp;
+    }
+
+    void addInfo(DependencyInstrInfo *info) {
       vec.push_back(info);
     }
 
-    InfoType::const_iterator begin() const
-    {
+    InfoType::const_iterator begin() const {
       return vec.begin();
     }
 
-    InfoType::const_iterator end() const
-    {
+    InfoType::const_iterator end() const {
       return vec.end();
     }
   };

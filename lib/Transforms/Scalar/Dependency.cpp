@@ -827,9 +827,12 @@ namespace {
         for (Instruction& inst : basic_block) {
           if (StoreInst *si = dyn_cast<StoreInst> (&inst))
           {
-            if (si->getPointerOperand() == V && ROOT) {
-              if (Instruction* I = dyn_cast<Instruction> (si->getValueOperand()))
-                DependencyDebugLocHelper::setDebugLoc(I, V, DependencyInstrInfo::Annotated);
+            if (si->getPointerOperand() == V) {
+              if (ROOT) {
+                if (Instruction* I = dyn_cast<Instruction> (si->getValueOperand()))
+                  DependencyDebugLocHelper::setDebugLoc(I, V, DependencyInstrInfo::Annotated);
+                runPerpectBottomUp(si->getValueOperand());
+              }
               runBottomUp(si->getValueOperand(), P && ROOT);
               runSearch(si->getValueOperand(), P && ROOT);
             }
@@ -847,6 +850,33 @@ namespace {
           }
         }
       processBranches(V);
+    }
+
+    void runPerpectBottomUp(Value *V)
+    {
+      if (Instruction *inst = dyn_cast <Instruction> (V))
+      {
+        DependencyDebugLocHelper::setDebugLoc(inst, this->value, DependencyInstrInfo::Perpect);
+
+        if (PHINode *phi = dyn_cast<PHINode> (inst)) {
+          for (unsigned i = 0; i < phi->getNumIncomingValues(); i++) {
+            Value *target_value = phi->getIncomingValue(i);
+            runPerpectBottomUp(target_value);
+          }
+        }
+        else if (CallInst *ci = dyn_cast<CallInst> (inst)) {
+          FunctionDependency *depends = processCallInst(ci);
+          for (size_t i = 0; i < ci->getCalledFunction()->arg_size(); i++)
+            if (depends->hasReturnDependency(i) == true) {
+              runPerpectBottomUp(ci->getOperand(i));
+            }
+        } else {
+          for (unsigned i = 0; i < inst->getNumOperands(); i++) {
+            Value *target_value = inst->getOperand(i);
+            runPerpectBottomUp(target_value);
+          }
+        }
+      }
     }
     
   };
