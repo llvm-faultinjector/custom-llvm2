@@ -1362,6 +1362,12 @@ void X86AsmPrinter::EmitInstruction(const MachineInstr *MI) {
   X86MCInstLower MCInstLowering(*MF, *this);
   const X86RegisterInfo *RI = MF->getSubtarget<X86Subtarget>().getRegisterInfo();
 
+  if (MI->getDebugLoc())
+    if ((signed)MI->getDebugLoc().getLine() == -1)
+      OutStreamer->AddComment("Maybe");
+    else if ((signed)MI->getDebugLoc().getLine() == -2)
+      OutStreamer->AddComment("Dominated");
+
   // Add a comment about EVEX-2-VEX compression for AVX-512 instrs that
   // are compressed from EVEX encoding to VEX encoding.
   if (TM.Options.MCOptions.ShowMCEncoding) {
