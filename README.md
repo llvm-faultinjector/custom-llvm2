@@ -1,15 +1,3 @@
-Custom LLVM for interprocedural dependencies chekcing
+# Custom LLVM for interprocedural dependencies chekcing (Forked from LLVM 5.0.1 Version)
 
-Fork from LLVM 5.0.1 Version
-============================
-
-This custom-llvm has been forked to determine the variable 
-dependencies(Dominated, Maybe) of the specific register marked 
-by llvm.annotation in the IR step. This project will help you 
-to output the variable dependenies from the object file.
-See Commits for further changes.
-
-ÀÌ custom-llvmÀº IR´Ü°è¿¡¼­ llvm.annotation·Î ÁöÁ¤µÈ Æ¯Á¤ registerÀÇ
-º¯¼öÀÇÁ¸¼º(Dominated, Maybe)¸¦ ÆÄ¾ÇÇÒ ¸ñÀûÀ¸·Î ForkingµÇ¾ú½À´Ï´Ù. 
-ÀÌ ÇÁ·ÎÁ§Æ®´Â IR´Ü°èÀÇ º¯¼öÀÇÁ¸¼ºÀ» objectÆÄÀÏ¿¡¼­ Ãâ·ÂÇÒ ¼ö ÀÖµµ·Ï µµ¿ÍÁÙ
-¼ö ÀÖ½À´Ï´Ù. ÀÚ¼¼ÇÑ º¯°æ»çÇ×Àº Commits¸¦ Âü°íÇÏ½Ê½Ã¿À.
+ì´ custom-llvmì€ IRë‹¨ê³„ì—ì„œ llvm.annotationë¡œ ì§€ì •ëœ íŠ¹ì • registerì˜ ë³€ìˆ˜ì˜ì¡´ì„±(Dominated, Maybe)ë¥¼ íŒŒì•…í•  ëª©ì ìœ¼ë¡œ Forkingë˜ì—ˆìŠµë‹ˆë‹¤. ì´ í”„ë¡œì íŠ¸ëŠ” IRë‹¨ê³„ì˜ ë³€ìˆ˜ì˜ì¡´ì„±ì„ objectíŒŒì¼ì—ì„œ ì¶œë ¥í•  ìˆ˜ ìˆë„ë¡ ë„ì™€ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤. ì½”ë“œì˜ ìì„¸í•œ ë³€ê²½ì‚¬í•­ì€ Commitsë¥¼ ì°¸ê³ í•˜ì‹­ì‹œì˜¤.
