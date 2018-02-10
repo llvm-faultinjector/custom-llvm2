@@ -395,15 +395,19 @@ namespace {
 
         for (BasicBlock& basic_block : *function)
           for (Instruction& inst : basic_block)
-            if (ReturnInst *ri = dyn_cast<ReturnInst>(&inst)) {
+            if (ReturnInst *ri = dyn_cast<ReturnInst>(&inst))
 
-              // 반환되는 내용은 반드시 ReturnInst를 거쳐야됩니다. 따라서 ReturnInst의
-              // Operand에 영향을 미치는 것들을 차례로 조사합니다. 이 과정은 함수 내부에
-              // 모든 ReturnInst를 조사합니다.
-              inst_dependency = new InstructionDependency();
-              runBottomUp(ri->getReturnValue());
-              delete inst_dependency;
-            }
+              // 반환값이 없는 함수의 경우 getReturnValue가 void(nullptr)입니다.
+              //   ret void
+              if (ri->getReturnValue()) {
+
+                // 반환되는 내용은 반드시 ReturnInst를 거쳐야됩니다. 따라서 ReturnInst의
+                // Operand에 영향을 미치는 것들을 차례로 조사합니다. 이 과정은 함수 내부에
+                // 모든 ReturnInst를 조사합니다.
+                inst_dependency = new InstructionDependency();
+                runBottomUp(ri->getReturnValue());
+                delete inst_dependency;
+              }
       }
 
     private:
@@ -831,7 +835,7 @@ namespace {
               if (ROOT) {
                 if (Instruction* I = dyn_cast<Instruction> (si->getValueOperand()))
                   DependencyDebugLocHelper::setDebugLoc(I, V, DependencyInstrInfo::Annotated);
-                runPerpectBottomUp(si->getValueOperand());
+                //runPerpectBottomUp(si->getValueOperand());
               }
               runBottomUp(si->getValueOperand(), P && ROOT);
               runSearch(si->getValueOperand(), P && ROOT);
@@ -863,8 +867,7 @@ namespace {
             Value *target_value = phi->getIncomingValue(i);
             runPerpectBottomUp(target_value);
           }
-        }
-        else if (CallInst *ci = dyn_cast<CallInst> (inst)) {
+        } else if (CallInst *ci = dyn_cast<CallInst> (inst)) {
           FunctionDependency *depends = processCallInst(ci);
           for (size_t i = 0; i < ci->getCalledFunction()->arg_size(); i++)
             if (depends->hasReturnDependency(i) == true) {
@@ -926,6 +929,7 @@ namespace {
       GlobalVariable *gv = cast<GlobalVariable>(ce->getOperand(0));
       Constant *cs = gv->getInitializer();
       ConstantDataArray *cda = cast<ConstantDataArray>(cs);
+
       return cda->getAsCString();
     }
 
@@ -1070,10 +1074,10 @@ namespace {
     InterproceduralDependencyCheckPass()
       : FunctionPass(ID)
     {
-      initializeInterproceduralDependencyCheckPassPass(*PassRegistry::getPassRegistry());
+      //initializeInterproceduralDependencyCheckPassPass(*PassRegistry::getPassRegistry());
       dependency_map = new DependencyMap();
       annotated_map = new DependencyMap();
-      //md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
+      md = MDNode::get(cnt, DILocation::get(cnt, 100, 100, DIScope::get(cnt, nullptr)));
       DependencyDebugLocHelper::Initialize();
     }
 
@@ -1128,11 +1132,6 @@ namespace {
 }
 
 char InterproceduralDependencyCheckPass::ID = 0;
-
-INITIALIZE_PASS_BEGIN(InterproceduralDependencyCheckPass, "dependency",
-  "Dependency Check and Marking Pass", false, false)
-INITIALIZE_PASS_END(InterproceduralDependencyCheckPass, "dependency",
-    "Dependency Check and Marking Pass", false, false)
 
 FunctionPass *myPass = nullptr;
 
