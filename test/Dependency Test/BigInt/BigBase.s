@@ -6593,4 +6593,188 @@ LBB51_19:                               # %if.then7.i.i
 	.type	32;
 	.endef
 	.section	.text,"xr",discard,"?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ"
-	.globl	"?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ" # -- Begin function ?_Xlen@?$bas
+	.globl	"?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ" # -- Begin function ?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ
+	.p2align	4, 0x90
+"?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ": # @"\01?_Xlen@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@SAXXZ"
+# BB#0:                                 # %entry
+	pushl	$"??_C@_0BA@JFNIOLAK@string?5too?5long?$AA@"
+	calll	"?_Xlength_error@std@@YAXPBD@Z"
+                                        # -- End function
+	.def	 "___ehhandler$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.text
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+"___ehhandler$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z": # @"__ehhandler$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+"___ehhandler$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z": # @"__ehhandler$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+"___ehhandler$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z": # @"__ehhandler$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+"___ehhandler$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z": # @"__ehhandler$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+"___ehhandler$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z": # @"__ehhandler$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??6BigBase@ofw@@QBE?AV01@I@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??6BigBase@ofw@@QBE?AV01@I@Z
+"___ehhandler$??6BigBase@ofw@@QBE?AV01@I@Z": # @"__ehhandler$??6BigBase@ofw@@QBE?AV01@I@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??6BigBase@ofw@@QBE?AV01@I@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??5BigBase@ofw@@QBE?AV01@I@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??5BigBase@ofw@@QBE?AV01@I@Z
+"___ehhandler$??5BigBase@ofw@@QBE?AV01@I@Z": # @"__ehhandler$??5BigBase@ofw@@QBE?AV01@I@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??5BigBase@ofw@@QBE?AV01@I@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??YBigBase@ofw@@QAEAAV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??YBigBase@ofw@@QAEAAV01@ABV01@@Z
+"___ehhandler$??YBigBase@ofw@@QAEAAV01@ABV01@@Z": # @"__ehhandler$??YBigBase@ofw@@QAEAAV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??YBigBase@ofw@@QAEAAV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??HBigBase@ofw@@QBE?AV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??HBigBase@ofw@@QBE?AV01@ABV01@@Z
+"___ehhandler$??HBigBase@ofw@@QBE?AV01@ABV01@@Z": # @"__ehhandler$??HBigBase@ofw@@QBE?AV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??HBigBase@ofw@@QBE?AV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??GBigBase@ofw@@QBE?AV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??GBigBase@ofw@@QBE?AV01@ABV01@@Z
+"___ehhandler$??GBigBase@ofw@@QBE?AV01@ABV01@@Z": # @"__ehhandler$??GBigBase@ofw@@QBE?AV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??GBigBase@ofw@@QBE?AV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??DBigBase@ofw@@QBE?AV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??DBigBase@ofw@@QBE?AV01@ABV01@@Z
+"___ehhandler$??DBigBase@ofw@@QBE?AV01@ABV01@@Z": # @"__ehhandler$??DBigBase@ofw@@QBE?AV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??DBigBase@ofw@@QBE?AV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??LBigBase@ofw@@QBE?AV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??LBigBase@ofw@@QBE?AV01@ABV01@@Z
+"___ehhandler$??LBigBase@ofw@@QBE?AV01@ABV01@@Z": # @"__ehhandler$??LBigBase@ofw@@QBE?AV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??LBigBase@ofw@@QBE?AV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$??KBigBase@ofw@@QBE?AV01@ABV01@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$??KBigBase@ofw@@QBE?AV01@ABV01@@Z
+"___ehhandler$??KBigBase@ofw@@QBE?AV01@ABV01@@Z": # @"__ehhandler$??KBigBase@ofw@@QBE?AV01@ABV01@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$??KBigBase@ofw@@QBE?AV01@ABV01@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z
+"___ehhandler$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z": # @"__ehhandler$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.def	 "___ehhandler$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z";
+	.scl	3;
+	.type	32;
+	.endef
+	.p2align	4, 0x90         # -- Begin function __ehhandler$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z
+"___ehhandler$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z": # @"__ehhandler$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z"
+# BB#0:                                 # %entry
+	movl	$"L__ehtable$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z", %eax
+	jmp	___CxxFrameHandler3     # TAILCALL
+                                        # -- End function
+	.section	.rdata,"dr",discard,"??_C@_0BA@JFNIOLAK@string?5too?5long?$AA@"
+	.globl	"??_C@_0BA@JFNIOLAK@string?5too?5long?$AA@" # @"\01??_C@_0BA@JFNIOLAK@string?5too?5long?$AA@"
+"??_C@_0BA@JFNIOLAK@string?5too?5long?$AA@":
+	.asciz	"string too long"
+
+	.section	.drectve,"yn"
+	.ascii	" /FAILIFMISMATCH:\"_MSC_VER=1900\""
+	.ascii	" /FAILIFMISMATCH:\"_ITERATOR_DEBUG_LEVEL=0\""
+	.ascii	" /FAILIFMISMATCH:\"RuntimeLibrary=MT_StaticRelease\""
+	.ascii	" /DEFAULTLIB:libcpmt.lib"
+	.ascii	" /FAILIFMISMATCH:\"_CRT_STDIO_ISO_WIDE_SPECIFIERS=0\""
+	.safeseh	"___ehhandler$??0BigBase@ofw@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+	.safeseh	"___ehhandler$?init_hex@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+	.safeseh	"___ehhandler$?init_decimal@BigBase@ofw@@AAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+	.safeseh	"___ehhandler$?aly_hex@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+	.safeseh	"___ehhandler$?aly_dec@BigBase@ofw@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"
+	.safeseh	"___ehhandler$??6BigBase@ofw@@QBE?AV01@I@Z"
+	.safeseh	"___ehhandler$??5BigBase@ofw@@QBE?AV01@I@Z"
+	.safeseh	"___ehhandler$??YBigBase@ofw@@QAEAAV01@ABV01@@Z"
+	.safeseh	"___ehhandler$??HBigBase@ofw@@QBE?AV01@ABV01@@Z"
+	.safeseh	"___ehhandler$??GBigBase@ofw@@QBE?AV01@ABV01@@Z"
+	.safeseh	"___ehhandler$??DBigBase@ofw@@QBE?AV01@ABV01@@Z"
+	.safeseh	"___ehhandler$??LBigBase@ofw@@QBE?AV01@ABV01@@Z"
+	.safeseh	"___ehhandler$??KBigBase@ofw@@QBE?AV01@ABV01@@Z"
+	.safeseh	"___ehhandler$?gcd@BigBase@ofw@@QBE?AV12@ABV12@@Z"
+	.safeseh	"___ehhandler$?lcm@BigBase@ofw@@QBE?AV12@ABV12@@Z"
+
