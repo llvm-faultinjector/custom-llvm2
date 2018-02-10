@@ -835,7 +835,7 @@ namespace {
               if (ROOT) {
                 if (Instruction* I = dyn_cast<Instruction> (si->getValueOperand()))
                   DependencyDebugLocHelper::setDebugLoc(I, V, DependencyInstrInfo::Annotated);
-                //runPerpectBottomUp(si->getValueOperand());
+                runPerpectBottomUp(si->getValueOperand());
               }
               runBottomUp(si->getValueOperand(), P && ROOT);
               runSearch(si->getValueOperand(), P && ROOT);
@@ -860,7 +860,12 @@ namespace {
     {
       if (Instruction *inst = dyn_cast <Instruction> (V))
       {
+        if (inst_dependency->hasInstructoin(inst, true))
+          return;
+
         DependencyDebugLocHelper::setDebugLoc(inst, this->value, DependencyInstrInfo::Perpect);
+
+        inst_dependency->addInstruction(inst, true);
 
         if (PHINode *phi = dyn_cast<PHINode> (inst)) {
           for (unsigned i = 0; i < phi->getNumIncomingValues(); i++) {

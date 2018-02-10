@@ -96,7 +96,7 @@ LBB1_6:                                 # %for.cond.cleanup
 	jge	LBB2_6
 # BB#1:                                 # %for.body.lr.ph.i
 	movl	24(%esp), %edi
-	leal	-1(%eax), %ecx          # [Dominated, Source: pi]
+	leal	-1(%eax), %ecx          # [Perpect, Source: pi]
 	movl	%eax, %ebx
 	movl	(%edi,%esi,4), %edx     # [Maybe, Source: pi]
 	.p2align	4, 0x90
@@ -109,12 +109,12 @@ LBB2_2:                                 # %for.body.i
                                         #   in Loop: Header=BB2_2 Depth=1
 	movl	4(%edi,%ecx,4), %eax
 	movl	%ebp, 4(%edi,%ecx,4)
-	incl	%ecx                    # [Dominated, Source: pi]
+	incl	%ecx                    # [Perpect, Source: pi]
 	movl	%eax, (%edi,%ebx,4)
 LBB2_4:                                 # %for.inc.i
                                         #   in Loop: Header=BB2_2 Depth=1
-	incl	%ebx                    # [Maybe, Source: pi]
-	cmpl	%ebx, %esi              # [Maybe, Source: pi]
+	incl	%ebx                    # [Dominated, Source: pi]
+	cmpl	%ebx, %esi              # [Dominated, Source: pi]
 	jne	LBB2_2
 # BB#5:                                 # %"\01?partition@@YAHQAHHH@Z.exit"
 	movl	(%edi,%esi,4), %eax
