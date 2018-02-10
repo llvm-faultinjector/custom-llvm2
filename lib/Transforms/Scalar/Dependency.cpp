@@ -32,6 +32,9 @@
 /// Dependency check 결과를 출력할 지의 여부를 결정합니다.
 #define IDC_PRINT_RESULT                            1
 
+/// Annotate된 변수가 있는 함수만 출력합니다.
+#define IDC_PRINT_NONCONDITIONAL                    1
+
 /// 함수가 정의되지 않은 경우, 콘솔에 메시지를 출력합니다.
 #define IDC_PRINT_MSG_EMPTY_FUNCTION                1
 
@@ -361,7 +364,7 @@ namespace {
       if (FD->getFunction()->isIntrinsic()) return;
       if (FD->getFunction()->empty()) {
 #if IDC_PRINT_MSG_EMPTY_FUNCTION
-        errs() << "Function is not defined!\n";
+        errs() << FD->getFunction()->getName() << " Function is not defined!\n";
 #endif
 #if IDC_EMPTY_FUNCTION_PARAM_AFFECT_RETURN
         for (size_t argc = 0; argc < FD->getFunction()->arg_size(); argc++)
@@ -1115,6 +1118,10 @@ namespace {
 
     void print(Function *F)
     {
+#if IDC_PRINT_NONCONDITIONAL
+      if (function_map[F]->getAnnotatedVariableList().size() == 0)
+        return;
+#endif
       DependencyPrinter printer(annotated_map);
       printer.setTargetFunction(F);
 

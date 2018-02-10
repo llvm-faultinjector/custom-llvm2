@@ -464,7 +464,6 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     // This performs initialization so lowering for SplitCSR will be correct.
     TLI->initializeSplitCSR(EntryMBB);
 
-  errs() << "StartPass: " << Fn.getName() << "\n";
   FunctionPass *c = createInterproceduralDependencyCheckPass();
   c->runOnFunction(const_cast<Function&>(Fn));
 
