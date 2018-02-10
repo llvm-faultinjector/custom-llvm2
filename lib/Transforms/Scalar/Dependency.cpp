@@ -953,13 +953,23 @@ namespace {
     void calAnnotatedValue()
     {
       for (BasicBlock& basic_block : *target_function)
-        for (Instruction& inst : basic_block)
-          if (CallInst *ci = dyn_cast<CallInst> (&inst))
+        for (Instruction& inst : basic_block) {
+          if (CallInst *ci = dyn_cast<CallInst> (&inst)) {
+
+            // ??? 함수포인터로 추정되는 구문은 CalledFunction을 갖지 않음
+            //  %5 = tail call i32 bitcast (i32 (...)* @__CxxFrameHandler3 to i32 
+            //       (i8*, i8*, i8*, i8*, i8*)*)(i8* inreg %4, i8* %0, i8* %1, i8* %2, i8* %3)
+            if (!ci->getCalledFunction()) {
+              continue;
+            }
+
             if (ci->getCalledFunction()->getName() == llvm_annotate_variable) {
               annotated_value.push_back(AnnotatedTuple((
                 cast<BitCastInst>(ci->getArgOperand(0)))->getOperand(0), ci));
               annotated_target.push_back((cast<BitCastInst>(ci->getArgOperand(0)))->getOperand(0));
             }
+          }
+        }
     }
 
   };

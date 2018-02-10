@@ -464,6 +464,7 @@ bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf) {
     // This performs initialization so lowering for SplitCSR will be correct.
     TLI->initializeSplitCSR(EntryMBB);
 
+  errs() << "StartPass: " << Fn.getName() << "\n";
   FunctionPass *c = createInterproceduralDependencyCheckPass();
   c->runOnFunction(const_cast<Function&>(Fn));
 
@@ -1366,9 +1367,6 @@ void SelectionDAGISel::SelectAllBasicBlocks(const Function &Fn) {
   FastISel *FastIS = nullptr;
   if (TM.Options.EnableFastISel)
     FastIS = TLI->createFastISel(*FuncInfo, LibInfo);
-
-  if (!FastIS)
-    errs() << "FastIS is denied in '" << Fn.getName() << "' function.\n";
 
   setupSwiftErrorVals(Fn, TLI, FuncInfo);
 
