@@ -98,7 +98,6 @@ void llvm::initializeScalarOpts(PassRegistry &Registry) {
   initializeLoopLoadEliminationPass(Registry);
   initializeLoopSimplifyCFGLegacyPassPass(Registry);
   initializeLoopVersioningPassPass(Registry);
-  initializeInterproceduralDependencyCheckPassPass(Registry);
 }
 
 void LLVMInitializeScalarOpts(LLVMPassRegistryRef R) {
@@ -280,8 +279,4 @@ void LLVMAddBasicAliasAnalysisPass(LLVMPassManagerRef PM) {
 
 void LLVMAddLowerExpectIntrinsicPass(LLVMPassManagerRef PM) {
   unwrap(PM)->add(createLowerExpectIntrinsicPass());
-}
-
-void LLVMAddInterproceduralDependencyCheckPass(LLVMPassManagerRef PM) {
-  unwrap(PM)->add(createInterproceduralDependencyCheckPass());
 }
