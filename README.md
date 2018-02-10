@@ -1,16 +1,16 @@
 # Custom LLVM (Forked from LLVM 5.0.1 Version)
-ÀÌ custom-llvmÀº IR´Ü°è¿¡¼­ llvm.annotation·Î ÁöÁ¤µÈ Æ¯Á¤ registerÀÇ º¯¼öÀÇÁ¸¼º(Dominated, Maybe)¸¦ ÆÄ¾ÇÇÒ ¸ñÀûÀ¸·Î ForkingµÇ¾ú½À´Ï´Ù.
-ÀÌ ÇÁ·ÎÁ§Æ®´Â IR´Ü°èÀÇ º¯¼öÀÇÁ¸¼ºÀ» objectÆÄÀÏ¿¡¼­ Ãâ·ÂÇÒ ¼ö ÀÖµµ·Ï µµ¿ÍÁÙ ¼ö ÀÖ½À´Ï´Ù. ÄÚµåÀÇ ÀÚ¼¼ÇÑ º¯°æ»çÇ×Àº Commits¸¦ Âü°íÇÏ¼¼¿ä.
-¶ÇÇÑ Å×½ºÆ® ¹× ±âÅ¸ ³»¿ë¿¡ °üÇØ¼± develop, testºê·£Ä¡¸¦ Âü°íÇÏ¼¼¿ä.
+ì´ custom-llvmì€ IRë‹¨ê³„ì—ì„œ llvm.annotationë¡œ ì§€ì •ëœ íŠ¹ì • registerì˜ ë³€ìˆ˜ì˜ì¡´ì„±(Dominated, Maybe)ë¥¼ íŒŒì•…í•  ëª©ì ìœ¼ë¡œ Forkingë˜ì—ˆìŠµë‹ˆë‹¤.
+ì´ í”„ë¡œì íŠ¸ëŠ” IRë‹¨ê³„ì˜ ë³€ìˆ˜ì˜ì¡´ì„±ì„ objectíŒŒì¼ì—ì„œ ì¶œë ¥í•  ìˆ˜ ìˆë„ë¡ ë„ì™€ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤. ì½”ë“œì˜ ìì„¸í•œ ë³€ê²½ì‚¬í•­ì€ Commitsë¥¼ ì°¸ê³ í•˜ì„¸ìš”.
+ë˜í•œ í…ŒìŠ¤íŠ¸ ë° ê¸°íƒ€ ë‚´ìš©ì— ê´€í•´ì„  develop, testë¸Œëœì¹˜ë¥¼ ì°¸ê³ í•˜ì„¸ìš”.
 
 ***
 
-## 1. IR ´Ü°è¿¡¼­ÀÇ Ç¥Çö
-[Test Æú´õ](test/Dependency%20Test)ÀÇ b.cpp¿Í b.ll¸¦ Âü°íÇÏ¸é¼­ ´ÙÀ½ ±ÛÀ» ÀĞ¾îÁÖ¼¼¿ä.
+## 1. IR ë‹¨ê³„ì—ì„œì˜ í‘œí˜„
+[Test í´ë”](test/Dependency%20Test)ì˜ b.cppì™€ b.llë¥¼ ì°¸ê³ í•˜ë©´ì„œ ë‹¤ìŒ ê¸€ì„ ì½ì–´ì£¼ì„¸ìš”.
 
 ### 1.1. llvm.annotation
-`__attribute__((annotate("message")))`´Â llvm¿¡¼­ Á¦°øÇÏ´Â annotation ±â´ÉÀÔ´Ï´Ù. ÀÌ ±â´ÉÀ» »ç¿ëÇÏ¸é IRÀÇ ÃÖÁ¾´Ü°è±îÁö annotateµÈ º¯¼ö¸¦
-¾Ë ¼ö ÀÖ½À´Ï´Ù.  ¶ÇÇÑ annotateµÈ º¯¼ö¿¡¼­ `"message"`¿¡ ³»¿ëÀ» ¾Ë ¼ö ÀÖ½À´Ï´Ù.
+`__attribute__((annotate("message")))`ëŠ” llvmì—ì„œ ì œê³µí•˜ëŠ” annotation ê¸°ëŠ¥ì…ë‹ˆë‹¤. ì´ ê¸°ëŠ¥ì„ ì‚¬ìš©í•˜ë©´ IRì˜ ìµœì¢…ë‹¨ê³„ê¹Œì§€ annotateëœ ë³€ìˆ˜ë¥¼
+ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.  ë˜í•œ annotateëœ ë³€ìˆ˜ì—ì„œ `"message"`ì— ë‚´ìš©ì„ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 ``` c++
   int __attribute__((annotate("a"))) a = 0;
 ```
@@ -22,76 +22,76 @@
   call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %1) #2
   call void @llvm.var.annotation(i8* nonnull %1, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str.1, i32 0, i32 0), i32 10)
 ```
-º¯¼ö a´Â À§ C++ ±¸¹®À» ÅëÇØ annotateµÇ¾ú½À´Ï´Ù. ¹Ø IRÇ¥ÇöÀ» º¸¸é `@llvm.var.annotation`¶ó´Â ÇÔ¼ö°¡ `%1`¸¦ È£ÃâÇÏ¸ç, `%1`Àº `%a`¸¦ 
-bitcastÇÏ°í ÀÖÀ½À» ¾Ë ¼ö ÀÖ½À´Ï´Ù. `%a`´Â annotateµÈ º¯¼ö a¸¦ °¡¸®Åµ´Ï´Ù. 
-llvm annotation±â´ÉÀ» »ç¿ëÇÏ¸é `StoreInst`¸¦ ÅëÇØ ¾î¶² °ªÀÌ `%a`¿¡ ÇÒ´çµÇ´ÂÁö ¾Ë ¼ö ÀÖ½À´Ï´Ù.
+ë³€ìˆ˜ aëŠ” ìœ„ C++ êµ¬ë¬¸ì„ í†µí•´ annotateë˜ì—ˆìŠµë‹ˆë‹¤. ë°‘ IRí‘œí˜„ì„ ë³´ë©´ `@llvm.var.annotation`ë¼ëŠ” í•¨ìˆ˜ê°€ `%1`ë¥¼ í˜¸ì¶œí•˜ë©°, `%1`ì€ `%a`ë¥¼ 
+bitcastí•˜ê³  ìˆìŒì„ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤. `%a`ëŠ” annotateëœ ë³€ìˆ˜ aë¥¼ ê°€ë¦¬í‚µë‹ˆë‹¤. 
+llvm annotationê¸°ëŠ¥ì„ ì‚¬ìš©í•˜ë©´ `StoreInst`ë¥¼ í†µí•´ ì–´ë–¤ ê°’ì´ `%a`ì— í• ë‹¹ë˜ëŠ”ì§€ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 ``` llvm
   %add4 = add nsw i32 %4, %call
   store i32 %add4, i32* %a, align 4, !tbaa !3
 ```
-À§ ±¸¹®Àº `%add4`ÀÇ °ªÀÌ `%a`¿¡ ÀúÀåµÇ´Â ¸ğ½ÀÀÔ´Ï´Ù. ÀÌ ±â´ÉÀº annotateµÈ ¸ğµç º¯¼ö¿¡¼­ µ¿ÀÛÇÏ¸ç, ÃÖÀûÈ­ ´Ü°è¿¡¼­µµ »ç¶óÁöÁö ¾Ê½À´Ï´Ù.
+ìœ„ êµ¬ë¬¸ì€ `%add4`ì˜ ê°’ì´ `%a`ì— ì €ì¥ë˜ëŠ” ëª¨ìŠµì…ë‹ˆë‹¤. ì´ ê¸°ëŠ¥ì€ annotateëœ ëª¨ë“  ë³€ìˆ˜ì—ì„œ ë™ì‘í•˜ë©°, ìµœì í™” ë‹¨ê³„ì—ì„œë„ ì‚¬ë¼ì§€ì§€ ì•ŠìŠµë‹ˆë‹¤.
 
 ***
 
 ## 2. Dependency Pass
-ÀÌ ÆĞ½º´Â º¯¼öÀÇ ÀÇÁ¸¼ºÀ» Instruction¿¡ ¸¶Å·ÇÏ±â À§ÇÑ ÆĞ½ºÀÔ´Ï´Ù. ÃÖÀûÈ­´Ü°è°¡ ¾Æ´Ñ SDNode »ı¼º Á÷Àü¿¡ °¢ ÇÔ¼ö´ç ÇÑ ¹ø¾¿ ½ÇÇàµË´Ï´Ù.
-ÀÌ [¸µÅ©](https://github.com/rollrat/custom-llvm2/commit/583681378edf38a3d837135f9815c621c3021590#diff-825e43e63961002d7541aec6d4d4f7a4R468)
-´Â À§ °úÁ¤À» ³ªÅ¸³À´Ï´Ù. `SelectAllBasicBlocks`¿¡ ÀÇÇÑ SDNode »ı¼º Á÷Àü `c->runOnFunction`À» ÅëÇØ ¸¶Å·À» ÁøÇàÇÏ´Â °ÍÀ» ¾Ë ¼ö ÀÖ½À´Ï´Ù.
+ì´ íŒ¨ìŠ¤ëŠ” ë³€ìˆ˜ì˜ ì˜ì¡´ì„±ì„ Instructionì— ë§ˆí‚¹í•˜ê¸° ìœ„í•œ íŒ¨ìŠ¤ì…ë‹ˆë‹¤. ìµœì í™”ë‹¨ê³„ê°€ ì•„ë‹Œ SDNode ìƒì„± ì§ì „ì— ê° í•¨ìˆ˜ë‹¹ í•œ ë²ˆì”© ì‹¤í–‰ë©ë‹ˆë‹¤.
+ì´ [ë§í¬](https://github.com/rollrat/custom-llvm2/commit/583681378edf38a3d837135f9815c621c3021590#diff-825e43e63961002d7541aec6d4d4f7a4R468)
+ëŠ” ìœ„ ê³¼ì •ì„ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤. `SelectAllBasicBlocks`ì— ì˜í•œ SDNode ìƒì„± ì§ì „ `c->runOnFunction`ì„ í†µí•´ ë§ˆí‚¹ì„ ì§„í–‰í•˜ëŠ” ê²ƒì„ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-´ÙÀ½ ¸µÅ©ÀÇ ¼Ò½º´Â Dependency PassÀÇ Àü¹®ÀÔ´Ï´Ù.
+ë‹¤ìŒ ë§í¬ì˜ ì†ŒìŠ¤ëŠ” Dependency Passì˜ ì „ë¬¸ì…ë‹ˆë‹¤.
 ```
 https://github.com/rollrat/custom-llvm2/blob/master/include/llvm/DependencyInfo.h
 https://github.com/rollrat/custom-llvm2/blob/master/lib/Transforms/Scalar/Dependency.cpp
 ```
 
-### 2.1. Instruction ¸¶Å· Á¾·ù
-´ÙÀ½ ³× °¡Áö Ç×¸ñÀº Dependency Pass°¡ `Instruction`À» ¸¶Å·ÇÏ´Â Á¾·ùÀÔ´Ï´Ù.
+### 2.1. Instruction ë§ˆí‚¹ ì¢…ë¥˜
+ë‹¤ìŒ ë„¤ ê°€ì§€ í•­ëª©ì€ Dependency Passê°€ `Instruction`ì„ ë§ˆí‚¹í•˜ëŠ” ì¢…ë¥˜ì…ë‹ˆë‹¤.
 ```
-Annotated : StoreInst°¡ ´ëÀÔÇÏ´Â InstructionÀ» ³ªÅ¸³À´Ï´Ù.
-Perpect : ¿ÏÀüÇÏ°Ô ¿¬°áµÈ InstructionÀ» ³ªÅ¸³À´Ï´Ù. 
-Dominated : Perpect¸¦ Æ÷ÇÔÇÏ¸ç, »óÀ§ BasicBlock°ú ¿¬°áµÈ branch¸¦ º¯È­½ÃÅ°´Â Instructionµµ Æ÷ÇÔµË´Ï´Ù.
-Maybe : Dominated¸¦ Æ÷ÇÔÇÏ¸ç, ¿¬°áµÈ ¸ğµç BasicBlock¿¡ °üÇØ¼­ ÀÌ BBÀÇ branch¸¦ º¯È­½ÃÅ°´Â ¸ğµç Instructionµµ Æ÷ÇÔµË´Ï´Ù.
+Annotated : StoreInstê°€ ëŒ€ì…í•˜ëŠ” Instructionì„ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤.
+Perpect : ì™„ì „í•˜ê²Œ ì—°ê²°ëœ Instructionì„ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤. 
+Dominated : Perpectë¥¼ í¬í•¨í•˜ë©°, ìƒìœ„ BasicBlockê³¼ ì—°ê²°ëœ branchë¥¼ ë³€í™”ì‹œí‚¤ëŠ” Instructionë„ í¬í•¨ë©ë‹ˆë‹¤.
+Maybe : Dominatedë¥¼ í¬í•¨í•˜ë©°, ì—°ê²°ëœ ëª¨ë“  BasicBlockì— ê´€í•´ì„œ ì´ BBì˜ branchë¥¼ ë³€í™”ì‹œí‚¤ëŠ” ëª¨ë“  Instructionë„ í¬í•¨ë©ë‹ˆë‹¤.
 ```
-`Annotated` >> `Perpect` >> `Dominated` >> `Maybe`¼øÀ¸·Î ¿ì¼±¼øÀ§°¡ °áÁ¤µË´Ï´Ù. 
-°¡·É, Annotated¸¶Å·ÀÌµÈ `Instruction`Àº `Maybe`¸¶Å·À» Æ÷ÇÔÇÕ´Ï´Ù.
+`Annotated` >> `Perpect` >> `Dominated` >> `Maybe`ìˆœìœ¼ë¡œ ìš°ì„ ìˆœìœ„ê°€ ê²°ì •ë©ë‹ˆë‹¤. 
+ê°€ë ¹, Annotatedë§ˆí‚¹ì´ëœ `Instruction`ì€ `Maybe`ë§ˆí‚¹ì„ í¬í•¨í•©ë‹ˆë‹¤.
 
 ### 2.2. Branch Map
-Branch MapÀº Function BasicBlockÀÇ Control-Flow-GraphÀÔ´Ï´Ù. ÀÌ°ÍÀº Dominated¿Í Maybe¸¦ ±¸º°ÇÒ ¶§ »ç¿ëµË´Ï´Ù. 
-Branch MapÀ» Âü°íÇÏ¿© »óÀ§ BasicBlockÀÌ ÇÑ °³¶ó¸é Dominated¸¦, µÎ °³ÀÌ»óÀÌ¶ó¸é Maybe¸¦ »ç¿ëÇÕ´Ï´Ù.
+Branch Mapì€ Function BasicBlockì˜ Control-Flow-Graphì…ë‹ˆë‹¤. ì´ê²ƒì€ Dominatedì™€ Maybeë¥¼ êµ¬ë³„í•  ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤. 
+Branch Mapì„ ì°¸ê³ í•˜ì—¬ ìƒìœ„ BasicBlockì´ í•œ ê°œë¼ë©´ Dominatedë¥¼, ë‘ ê°œì´ìƒì´ë¼ë©´ Maybeë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.
 ![Image](cfg-type.png)
 
-### 2.3. ÇÔ¼ö ÀÇÁ¸¼º
-AnnotateµÈ º¯¼ö°¡ ÇÔ¼öÀÇ ÀÎÀÚÀÇ Æ÷ÀÎÅÍ·Î µé¾î°¥ °æ¿ì È£ÃâµÈ ÇÔ¼öÀÇ ³»ºÎ¿¡¼­ º¯°æµÉ ¼ö ÀÖ½À´Ï´Ù.
-¶ÇÇÑ ÇÔ¼öÀÇ ¹İÈ¯°ªÀÌ AnnotateµÈ º¯¼ö¿¡ DominatedµÇ¾ú´Ù¸é, ±× ÇÔ¼öÀÇ ÀÎÀÚµéÀÌ ¹İÈ¯°ª¿¡ ¿µÇâÀ» ÁÙ ¼ö ÀÖ½À´Ï´Ù.
-ÀÌ µÎ °¡Áö¸¦ ¾Ë±â À§ÇØ ´ÙÀ½°ú °°Àº Å¬·¡½º¸¦ »ç¿ëÇÏ¿© È£ÃâÇÔ¼ö °Ë»çÇÕ´Ï´Ù.
+### 2.3. í•¨ìˆ˜ ì˜ì¡´ì„±
+Annotateëœ ë³€ìˆ˜ê°€ í•¨ìˆ˜ì˜ ì¸ìì˜ í¬ì¸í„°ë¡œ ë“¤ì–´ê°ˆ ê²½ìš° í˜¸ì¶œëœ í•¨ìˆ˜ì˜ ë‚´ë¶€ì—ì„œ ë³€ê²½ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+ë˜í•œ í•¨ìˆ˜ì˜ ë°˜í™˜ê°’ì´ Annotateëœ ë³€ìˆ˜ì— Dominatedë˜ì—ˆë‹¤ë©´, ê·¸ í•¨ìˆ˜ì˜ ì¸ìë“¤ì´ ë°˜í™˜ê°’ì— ì˜í–¥ì„ ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+ì´ ë‘ ê°€ì§€ë¥¼ ì•Œê¸° ìœ„í•´ ë‹¤ìŒê³¼ ê°™ì€ í´ë˜ìŠ¤ë¥¼ ì‚¬ìš©í•˜ì—¬ í˜¸ì¶œí•¨ìˆ˜ ê²€ì‚¬í•©ë‹ˆë‹¤.
 ```
-FunctionReturnDependencyChecker: ¾î¶² ÇÔ¼öÀÎÀÚ°¡ ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö °Ë»çÇÕ´Ï´Ù.
-FunctionArgumentDependencyCheck: ¾î¶² ÇÔ¼öÀÎÀÚ°¡ ´Ù¸¥ ÇÔ¼öÀÎÀÚ¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö °Ë»çÇÕ´Ï´Ù.
+FunctionReturnDependencyChecker: ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ê²€ì‚¬í•©ë‹ˆë‹¤.
+FunctionArgumentDependencyCheck: ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ ë‹¤ë¥¸ í•¨ìˆ˜ì¸ìì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ê²€ì‚¬í•©ë‹ˆë‹¤.
 ```
-ÇÔ¼ö ÀÇÁ¸¼ºÀ» °Ë»çÇÒ ÇÊ¿ä°¡ ÀÖ´Â °æ¿ì `DependencyChecker`ÀÇ `run`ÇÔ¼ö¸¦ ÅëÇØ ÇÔ¼ö´ç ÇÑ ¹ø¸¸ °Ë»çÇÕ´Ï´Ù.
-ÀÌ °Ë»ç°úÁ¤Àº AnnotateÀÇ ¿©ºÎ¿Í µ¶¸³ÀûÀ¸·Î ÁøÇàµË´Ï´Ù.
+í•¨ìˆ˜ ì˜ì¡´ì„±ì„ ê²€ì‚¬í•  í•„ìš”ê°€ ìˆëŠ” ê²½ìš° `DependencyChecker`ì˜ `run`í•¨ìˆ˜ë¥¼ í†µí•´ í•¨ìˆ˜ë‹¹ í•œ ë²ˆë§Œ ê²€ì‚¬í•©ë‹ˆë‹¤.
+ì´ ê²€ì‚¬ê³¼ì •ì€ Annotateì˜ ì—¬ë¶€ì™€ ë…ë¦½ì ìœ¼ë¡œ ì§„í–‰ë©ë‹ˆë‹¤.
 
-### 2.4. ¸¶Å· °áÁ¤
-´ÙÀ½Àº `Instruction`¸¶Å·¿¡ »ç¿ëµÇ´Â Å¬·¡½º¿Í ÇÔ¼öµé ÀÔ´Ï´Ù.
+### 2.4. ë§ˆí‚¹ ê²°ì •
+ë‹¤ìŒì€ `Instruction`ë§ˆí‚¹ì— ì‚¬ìš©ë˜ëŠ” í´ë˜ìŠ¤ì™€ í•¨ìˆ˜ë“¤ ì…ë‹ˆë‹¤.
 ``` c++
   class FunctionReturnDependencyChecker;
   class FunctionArgumentDependencyCheck
   class BottomUpDependencyChecker;
 ```
-À§ Å¬·¡½º Áß `BottomUpDependencyChecker`¸¸ `Instruction` ¸¶Å· ±ÇÇÑÀ» °¡Áı´Ï´Ù.
+ìœ„ í´ë˜ìŠ¤ ì¤‘ `BottomUpDependencyChecker`ë§Œ `Instruction` ë§ˆí‚¹ ê¶Œí•œì„ ê°€ì§‘ë‹ˆë‹¤.
 ```
-runPerpectBottomUp: Perpect ¸¶Å·¿¡ »ç¿ëµË´Ï´Ù. (ÀÌ ÇÔ¼ö´Â annotateµÈ º¯¼ö ÇÏ³ª´ç ÇÑ ¹ø È£ÃâµË´Ï´Ù.)
-runBottomUp: Dominated, Maybe ¸¶Å·¿¡ »ç¿ëµË´Ï´Ù.
-runSearch: Store¿¡ ÀÇÇÑ °ª º¯È­¿Í ÇÔ¼ö ÀÇÁ¸¼ºÀ» °Ë»çÇÕ´Ï´Ù. Á¦ÇÑµÈ Á¶°ÇÀ¸·Î Annotated ¸¶Å·¿¡ »ç¿ëµË´Ï´Ù.
-  (ÀÌ ÇÔ¼ö´Â runBottomUpÀ» Á¶°ÇÀûÀ¸·Î È£ÃâÇÕ´Ï´Ù.)
-processBranches: Branch MapÀ» »ç¿ëÇÏ¿© Á¶°ÇÀûÀ¸·Î runSearch, runBottomUpÀ» È£ÃâÇÕ´Ï´Ù.
+runPerpectBottomUp: Perpect ë§ˆí‚¹ì— ì‚¬ìš©ë©ë‹ˆë‹¤. (ì´ í•¨ìˆ˜ëŠ” annotateëœ ë³€ìˆ˜ í•˜ë‚˜ë‹¹ í•œ ë²ˆ í˜¸ì¶œë©ë‹ˆë‹¤.)
+runBottomUp: Dominated, Maybe ë§ˆí‚¹ì— ì‚¬ìš©ë©ë‹ˆë‹¤.
+runSearch: Storeì— ì˜í•œ ê°’ ë³€í™”ì™€ í•¨ìˆ˜ ì˜ì¡´ì„±ì„ ê²€ì‚¬í•©ë‹ˆë‹¤. ì œí•œëœ ì¡°ê±´ìœ¼ë¡œ Annotated ë§ˆí‚¹ì— ì‚¬ìš©ë©ë‹ˆë‹¤.
+  (ì´ í•¨ìˆ˜ëŠ” runBottomUpì„ ì¡°ê±´ì ìœ¼ë¡œ í˜¸ì¶œí•©ë‹ˆë‹¤.)
+processBranches: Branch Mapì„ ì‚¬ìš©í•˜ì—¬ ì¡°ê±´ì ìœ¼ë¡œ runSearch, runBottomUpì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
 ```
 ![Image](marking.png)
 
-#### 2.4.1. runBottomUp ÇÔ¼ö
-`runBottomUp`À» °ÅÄ¡´Â `Instruction`Àº `getOperand`¸¦ ÅëÇØ ¾ò¾îÁø `Instruction`¿¡ °ü°èµÈ `Value`¸¦ Á¶»çÇÕ´Ï´Ù.
-Dominated, MaybeÀÌ ¸¶Å·µÇ³ª, ¸¶Å· ±¸º°Àº ÀÌ ÇÔ¼ö¿¡¼­ ÀÌ·ç¾îÁö´Â °ÍÀÌ ¾Æ´Õ´Ï´Ù. ¸¶Å· ±¸º°Àº processBranches¸¦ ÅëÇØ
-ÀÌ·ç¾î Áı´Ï´Ù.
+#### 2.4.1. runBottomUp í•¨ìˆ˜
+`runBottomUp`ì„ ê±°ì¹˜ëŠ” `Instruction`ì€ `getOperand`ë¥¼ í†µí•´ ì–»ì–´ì§„ `Instruction`ì— ê´€ê³„ëœ `Value`ë¥¼ ì¡°ì‚¬í•©ë‹ˆë‹¤.
+Dominated, Maybeì´ ë§ˆí‚¹ë˜ë‚˜, ë§ˆí‚¹ êµ¬ë³„ì€ ì´ í•¨ìˆ˜ì—ì„œ ì´ë£¨ì–´ì§€ëŠ” ê²ƒì´ ì•„ë‹™ë‹ˆë‹¤. ë§ˆí‚¹ êµ¬ë³„ì€ processBranchesë¥¼ í†µí•´
+ì´ë£¨ì–´ ì§‘ë‹ˆë‹¤.
 ``` vb.net
 runBottomUp [Instruction: I, bool: P]
   if (P == true)
@@ -105,12 +105,12 @@ runBottomUp [Instruction: I, bool: P]
 
   processBranches(I)
 ```
-ÀÌ ¹İº¹Àº Operand°¡ `Instruction`ÀÌ ¾Æ´Ò ¶§±îÁö ¹İº¹µË´Ï´Ù.
-`Instruction`ÀÌ `CallInst`ÀÎ °æ¿ì¿£ `ReturnDependency`°¡ ÀÖ´Â ÇÔ¼ö ÀÎÀÚµé¸¸ °Ë»çÇÕ´Ï´Ù.
+ì´ ë°˜ë³µì€ Operandê°€ `Instruction`ì´ ì•„ë‹ ë•Œê¹Œì§€ ë°˜ë³µë©ë‹ˆë‹¤.
+`Instruction`ì´ `CallInst`ì¸ ê²½ìš°ì—” `ReturnDependency`ê°€ ìˆëŠ” í•¨ìˆ˜ ì¸ìë“¤ë§Œ ê²€ì‚¬í•©ë‹ˆë‹¤.
 
-#### 2.4.2. runSearch ÇÔ¼ö
-`runSearch`´Â `StoreInst` ¶Ç´Â `CallInst`ÀÇ ÀÎÀÚ·Î »ç¿ëµÇ´Â `Instruction`À» °Ë»çÇÕ´Ï´Ù.
-Annotated ¸¶Å·À» À§ÇÑ `ROOT : bool`¶ó´Â º¯¼ö°¡ »ç¿ëµÇ¸ç, ÀÌ º¯¼ö´Â ¸¶Å· `entry`¿¡¼­ÀÇ È£Ãâ¸¸ `true`ÀÔ´Ï´Ù.
+#### 2.4.2. runSearch í•¨ìˆ˜
+`runSearch`ëŠ” `StoreInst` ë˜ëŠ” `CallInst`ì˜ ì¸ìë¡œ ì‚¬ìš©ë˜ëŠ” `Instruction`ì„ ê²€ì‚¬í•©ë‹ˆë‹¤.
+Annotated ë§ˆí‚¹ì„ ìœ„í•œ `ROOT : bool`ë¼ëŠ” ë³€ìˆ˜ê°€ ì‚¬ìš©ë˜ë©°, ì´ ë³€ìˆ˜ëŠ” ë§ˆí‚¹ `entry`ì—ì„œì˜ í˜¸ì¶œë§Œ `true`ì…ë‹ˆë‹¤.
 ``` vb.net
 runSearch [Instruction: I, bool: P, bool: ROOT (= false)]
   for each Instruction in Function.BasicBlock
@@ -129,12 +129,12 @@ runSearch [Instruction: I, bool: P, bool: ROOT (= false)]
 
   processBranches(I)
 ```
-`P && ROOT`´Â `runSearch`´Ü°è¿¡¼± Dominated, Maybe¸¦ °áÁ¤ÇÒ ¼ö ¾ø±â ¶§¹®ÀÔ´Ï´Ù.
-´Ü, `ROOT`°¡ `true`ÀÏ °æ¿ì¿£ `P`µµ `true`ÀÌ¸ç, ÇÏÀ§ `Instruction`Àº Dominated·Î ¸¶Å·µË´Ï´Ù.
+`P && ROOT`ëŠ” `runSearch`ë‹¨ê³„ì—ì„  Dominated, Maybeë¥¼ ê²°ì •í•  ìˆ˜ ì—†ê¸° ë•Œë¬¸ì…ë‹ˆë‹¤.
+ë‹¨, `ROOT`ê°€ `true`ì¼ ê²½ìš°ì—” `P`ë„ `true`ì´ë©°, í•˜ìœ„ `Instruction`ì€ Dominatedë¡œ ë§ˆí‚¹ë©ë‹ˆë‹¤.
 
-#### 2.4.3. processBranches ÇÔ¼ö
-Branch MapÀ» ÅëÇØ ¾òÀº Á¤º¸·Î ÇØ´ç Branch¸¦ °áÁ¤ÇÏ´Â Compare¿ä¼Ò¸¦ ÃßÀûÇÕ´Ï´Ù.
-Branch°¡ ConditionalÇÏÁö ¾ÊÀ» °æ¿ì Compare¿ä¼Ò ÃßÀûÀ» °Ç³Ê ¶İ´Ï´Ù.
+#### 2.4.3. processBranches í•¨ìˆ˜
+Branch Mapì„ í†µí•´ ì–»ì€ ì •ë³´ë¡œ í•´ë‹¹ Branchë¥¼ ê²°ì •í•˜ëŠ” Compareìš”ì†Œë¥¼ ì¶”ì í•©ë‹ˆë‹¤.
+Branchê°€ Conditionalí•˜ì§€ ì•Šì„ ê²½ìš° Compareìš”ì†Œ ì¶”ì ì„ ê±´ë„ˆ ëœë‹ˆë‹¤.
 ``` vb.net
 processBranches [Instruction: I]
   processBlock(getNodeFromInstruction(I))
@@ -152,10 +152,10 @@ processBlock [BlockNode: BN]
 
     processBlock(BlockNode)
 ```
-ÇÑ ¹ø `processBlock`ÀÌ ½ÇÇàµÈ `BlockNode`´Â ´Ù½Ã ½ÇÇàµÇÁö ¾Ê½À´Ï´Ù.
+í•œ ë²ˆ `processBlock`ì´ ì‹¤í–‰ëœ `BlockNode`ëŠ” ë‹¤ì‹œ ì‹¤í–‰ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 
-#### 2.4.4. runPerpectBottomUp ÇÔ¼ö
-ÀÌ ÇÔ¼ö´Â `Instruction`ÀÇ °¢ Operand¸¦ Àç±ÍÀûÀ¸·Î ¼øÈ¸ÇÏ¿© Perpect ¸¶Å·À» ÇÕ´Ï´Ù.
+#### 2.4.4. runPerpectBottomUp í•¨ìˆ˜
+ì´ í•¨ìˆ˜ëŠ” `Instruction`ì˜ ê° Operandë¥¼ ì¬ê·€ì ìœ¼ë¡œ ìˆœíšŒí•˜ì—¬ Perpect ë§ˆí‚¹ì„ í•©ë‹ˆë‹¤.
 ``` vb.net
 runPerpectBottomUp [Instruction: I]
   I := Perpect
@@ -167,10 +167,10 @@ runPerpectBottomUp [Instruction: I]
 ***
 
 ## 3. SelectionDAG Follow
-SelectionDAG°¡ »ı¼ºµÇ¸é¼­ `Instruction`ÀÇ DependencyÁ¤º¸°¡ DAGNode·Î ³Ñ°ÜÁı´Ï´Ù.
-´ÙÀ½ °úÁ¤Àº PassManager°¡ SelectionDAG¸¦ »ı¼ºÇÏ¸é¼­ È£ÃâÇÏ´Â ÆÄÀÏ ¶Ç´Â ÇÔ¼ö¸¦ º¸¿©Áİ´Ï´Ù.
+SelectionDAGê°€ ìƒì„±ë˜ë©´ì„œ `Instruction`ì˜ Dependencyì •ë³´ê°€ DAGNodeë¡œ ë„˜ê²¨ì§‘ë‹ˆë‹¤.
+ë‹¤ìŒ ê³¼ì •ì€ PassManagerê°€ SelectionDAGë¥¼ ìƒì„±í•˜ë©´ì„œ í˜¸ì¶œí•˜ëŠ” íŒŒì¼ ë˜ëŠ” í•¨ìˆ˜ë¥¼ ë³´ì—¬ì¤ë‹ˆë‹¤.
 ```
-ÂüÁ¶: https://github.com/draperlaboratory/fracture/wiki/How-An-IR-Statement-Becomes-An-Instruction
+ì°¸ì¡°: https://github.com/draperlaboratory/fracture/wiki/How-An-IR-Statement-Becomes-An-Instruction
 
 FunctionPass
     -> MachineFunctionPass
@@ -185,16 +185,25 @@ lib/CodeGen/MachineFunctionPass.cpp
 
 lib/CodeGen/SelectionDAG/SelectionDAGISel.cpp
 -> bool SelectionDAGISel::runOnMachineFunction(MachineFunction &mf)
-runOnMachineFunctionÇÔ¼ö¿¡¼­ SelectAllBasicBlocksÇÔ¼ö°¡ ½ÇÇàµÇ±â Àü Dependency CheckingÀ» ½ÇÇàÇÕ´Ï´Ù.
+runOnMachineFunctioní•¨ìˆ˜ì—ì„œ SelectAllBasicBlocksí•¨ìˆ˜ê°€ ì‹¤í–‰ë˜ê¸° ì „ Dependency Checkingì„ ì‹¤í–‰í•©ë‹ˆë‹¤.
 
 lib/CodeGen/SelectionDAG/SelectionDAGISel.cpp
 -> void SelectionDAGISel::SelectAllBasicBlocks(const Function &Fn)
-SelectAllBasicBlocksÇÔ¼ö´Â `FastISel`°ú `SelectBasicBlock`À» È£ÃâÇÕ´Ï´Ù.
-`FastISel`Àº -O0¿¡¼­¸¸ ½ÇÇàµÇ´Â µğ¹ö±ë¿ë InstructionSelectionÀÌ°í,
-`SelectBasicBlocks`Àº `DoInstructionSelection`¸¦ ½ÇÇàÇÏ¸é¼­ SelectionDAGNode¸¦ »ı¼ºÇÕ´Ï´Ù.
+SelectAllBasicBlocksí•¨ìˆ˜ëŠ” `FastISel`ê³¼ `SelectBasicBlock`ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
+`FastISel`ì€ -O0ì—ì„œë§Œ ì‹¤í–‰ë˜ëŠ” ë””ë²„ê¹…ìš© InstructionSelectionì´ê³ ,
+`SelectBasicBlocks`ì€ `DoInstructionSelection`ë¥¼ ì‹¤í–‰í•˜ë©´ì„œ SelectionDAGNodeë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
 
 lib/CodeGen/SelectionDAG/SelectionDAGISel.cpp
 -> void SelectionDAGISel::CodeGenAndEmitDAG() {
-CodeGenAndEmitDAGÇÔ¼ö¿¡¼­ DAGCombine, DAGLegalize°¡ ½ÇÇàµË´Ï´Ù.
-¶ÇÇÑ Instruction Scheduleµµ ½ÇÇàµË´Ï´Ù.
+CodeGenAndEmitDAGí•¨ìˆ˜ì—ì„œ DAGCombine, DAGLegalizeê°€ ì‹¤í–‰ë©ë‹ˆë‹¤.
+ë˜í•œ Instruction Scheduleë„ ì‹¤í–‰ë©ë‹ˆë‹¤.
+```
+
+***
+
+## 4. ë²„ê·¸
+í˜„ì¬ ë²„ì „ì€ ë‹¤ìŒê³¼ ê°™ì€ í•¨ìˆ˜/ê¸°ëŠ¥ì— ëŒ€í•´ì„  Dependency Passê°€ ì‹¤í–‰ë˜ì§€ ì•Šê±°ë‚˜,
+ì˜¤ë¥˜ê°€ ë°œìƒí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+```
+* ê°€ë³€ì¸ìë¥¼ ê°€ì§„ í•¨ìˆ˜ì˜ ArgumentDependencyë¥¼ í™•ì¸í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
 ```
