@@ -58,7 +58,7 @@ void SHA256_Mixing(SHA_PULONG indexs, SHA_PULONG outdexs)
 ```
 위 t1이 마킹되었지만 -O2최적화에선 annotation이 남지 않습니다. extern함수를 이용하면 다음과 같은 결과를 .ll파일에서 얻을 수 있습니다.
 ``` llvm
-  ; 변경전
+  ; 적용전
 for.body73:                                       ; preds = %for.body73, %for.end62
   %add112215 = phi i32 [ %26, %for.end62 ], [ %add112, %for.body73 ]
   %i.2214 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
@@ -76,7 +76,7 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %shl78 = shl i32 %e.0210, 21
   ...
 
-  ; 변경후
+  ; 적용후
 for.body73:                                       ; preds = %for.body73, %for.end62
   %t1.0216 = phi i32 [ undef, %for.end62 ], [ %add93, %for.body73 ]
   %h.0215 = phi i32 [ %31, %for.end62 ], [ %g.0214, %for.body73 ]
@@ -88,6 +88,7 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %b.0209 = phi i32 [ %25, %for.end62 ], [ %35, %for.body73 ]
   %i.2208 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
   %32 = inttoptr i32 %t1.0216 to i8*
+  ; extern함수가 호출됨
   call void @__my__annotate(i8* %32) #2
   %shr74 = lshr i32 %e.0212, 6
   %shl75 = shl i32 %e.0212, 26
@@ -95,6 +96,8 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %shr77 = lshr i32 %e.0212, 11
   %shl78 = shl i32 %e.0212, 21
 ```
+이와 같이 extern 함수로 마킹할 경우 해당 함수의 인자의 마킹 종류는 아래에서 설명할 `Annotated`마킹이 됩니다.
+사용된 extern 함수는 `eraseFromParent`를 통해 llc에서 삭제됩니다.
 
 ***
 
