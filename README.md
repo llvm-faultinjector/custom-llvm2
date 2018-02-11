@@ -8,8 +8,8 @@
 ## 1. IR 단계에서의 표현
 [Test 폴더](test/Dependency%20Test)의 b.cpp와 b.ll를 참고하면서 다음 글을 읽어주세요.
 
-### 1.1. llvm.annotation
-`__attribute__((annotate("message")))`는 llvm에서 제공하는 annotation 기능입니다. 이 기능을 사용하면 IR의 최종단계까지 annotate된 변수를
+### 1.1. llvm.annotation를 이용한 변수 마킹
+`__attribute__((annotate("message")))`는 clang/llvm에서 제공하는 annotation 기능입니다. 이 기능을 사용하면 IR의 최종단계까지 annotate된 변수를
 알 수 있습니다.  또한 annotate된 변수에서 `"message"`에 내용을 알 수 있습니다.
 ``` c++
   int __attribute__((annotate("a"))) a = 0;
@@ -30,6 +30,71 @@ llvm annotation기능을 사용하면 `StoreInst`를 통해 어떤 값이 `%a`�
   store i32 %add4, i32* %a, align 4, !tbaa !3
 ```
 위 구문은 `%add4`의 값이 `%a`에 저장되는 모습입니다. 이 기능은 annotate된 모든 변수에서 동작하며, 최적화 단계에서도 사라지지 않습니다.
+
+### 1.2. extern 함수를 이용한 변수 마킹
+`llvm.annotation`을 이용한 변수 마킹 테스트 중 최대최적화시 일부 상황에서 마킹이 없어지는 현상을 발견했습니다.
+변수 자체를 마킹할 다른 방법을 찾지 못했으나, 변수 변경과정에서 사용되는 가상레지스터를 본체가 없는 함수를 호출해 찾을 수 있었습니다.
+``` c++
+#define ANNORATE(msg) __attribute__((annotate(msg)))
+extern void __my__annotate(void *);
+
+void SHA256_Mixing(SHA_PULONG indexs, SHA_PULONG outdexs)
+{
+   SHA_ULONG w[64];
+   SHA_ULONG i, a, b, c, d, e, f, g, h,  ANNORATE("t1") t1, ANNORATE("t2") t2;
+   
+   for (i = 0; i < 16; i++)
+      w[i] = CONVERT_TO_LITTLE_ENDIAN(indexs[i]);
+   
+   for (i = 16; i < 64; i++)
+      w[i] = SHA_256_s0(w[i - 15]) + w[i - 16] + w[i - 7] + SHA_256_s1(w[i - 2]);
+
+  for (i = 0; i < 64; i++) {
+
+    __my__annotate(t1);
+    SHA_256_LOOP(a, b, c, d, e, f, g, h, i, t1, t2);
+    SHA_256_XROLL(a, b, c, d, e, f, g, h, t1, t2);
+  }
+```
+위 t1이 마킹되었지만 -O2최적화에선 annotation이 남지 않습니다. extern함수를 이용하면 다음과 같은 결과를 .ll파일에서 얻을 수 있습니다.
+``` llvm
+  ; 변경전
+for.body73:                                       ; preds = %for.body73, %for.end62
+  %add112215 = phi i32 [ %26, %for.end62 ], [ %add112, %for.body73 ]
+  %i.2214 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
+  %h.0213 = phi i32 [ %35, %for.end62 ], [ %g.0212, %for.body73 ]
+  %g.0212 = phi i32 [ %34, %for.end62 ], [ %f.0211, %for.body73 ]
+  %f.0211 = phi i32 [ %33, %for.end62 ], [ %e.0210, %for.body73 ]
+  %e.0210 = phi i32 [ %32, %for.end62 ], [ %add111, %for.body73 ]
+  %d.0209 = phi i32 [ %31, %for.end62 ], [ %c.0208, %for.body73 ]
+  %c.0208 = phi i32 [ %30, %for.end62 ], [ %b.0207, %for.body73 ]
+  %b.0207 = phi i32 [ %29, %for.end62 ], [ %add112215, %for.body73 ]
+  %shr74 = lshr i32 %e.0210, 6
+  %shl75 = shl i32 %e.0210, 26
+  %or76 = or i32 %shr74, %shl75
+  %shr77 = lshr i32 %e.0210, 11
+  %shl78 = shl i32 %e.0210, 21
+  ...
+
+  ; 변경후
+for.body73:                                       ; preds = %for.body73, %for.end62
+  %t1.0216 = phi i32 [ undef, %for.end62 ], [ %add93, %for.body73 ]
+  %h.0215 = phi i32 [ %31, %for.end62 ], [ %g.0214, %for.body73 ]
+  %g.0214 = phi i32 [ %30, %for.end62 ], [ %f.0213, %for.body73 ]
+  %f.0213 = phi i32 [ %29, %for.end62 ], [ %e.0212, %for.body73 ]
+  %e.0212 = phi i32 [ %28, %for.end62 ], [ %add111, %for.body73 ]
+  %d.0211 = phi i32 [ %27, %for.end62 ], [ %c.0210, %for.body73 ]
+  %c.0210 = phi i32 [ %26, %for.end62 ], [ %b.0209, %for.body73 ]
+  %b.0209 = phi i32 [ %25, %for.end62 ], [ %35, %for.body73 ]
+  %i.2208 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
+  %32 = inttoptr i32 %t1.0216 to i8*
+  call void @__my__annotate(i8* %32) #2
+  %shr74 = lshr i32 %e.0212, 6
+  %shl75 = shl i32 %e.0212, 26
+  %or76 = or i32 %shr74, %shl75
+  %shr77 = lshr i32 %e.0212, 11
+  %shl78 = shl i32 %e.0212, 21
+```
 
 ***
 
