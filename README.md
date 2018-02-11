@@ -109,6 +109,11 @@ https://github.com/rollrat/custom-llvm2/blob/master/include/llvm/DependencyInfo.
 https://github.com/rollrat/custom-llvm2/blob/master/lib/Transforms/Scalar/Dependency.cpp
 ```
 
+다음 링크는 custom-llvm 레포지토리를 만들기 전 pass를 개발했던 git 링크입니다.
+```
+https://github.com/rollrat/llvm-control-pass
+```
+
 ### 2.1. Instruction 마킹 종류
 다음 네 가지 항목은 Dependency Pass가 `Instruction`을 마킹하는 종류입니다.
 ```
