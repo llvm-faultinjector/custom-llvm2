@@ -2,11 +2,13 @@ add_llvm_library(LLVMScalarOpts
   ADCE.cpp
   AlignmentFromAssumptions.cpp
   BDCE.cpp
+  CallSiteSplitting.cpp
   ConstantHoisting.cpp
   ConstantProp.cpp
   CorrelatedValuePropagation.cpp
   DCE.cpp
   DeadStoreElimination.cpp
+  DivRemPairs.cpp
   EarlyCSE.cpp
   FlattenCFGPass.cpp
   Float2Int.cpp
@@ -42,6 +44,7 @@ add_llvm_library(LLVMScalarOpts
   LowerExpectIntrinsic.cpp
   LowerGuardIntrinsic.cpp
   MemCpyOptimizer.cpp
+  MergeICmps.cpp
   MergedLoadStoreMotion.cpp
   NaryReassociate.cpp
   NewGVN.cpp
@@ -59,10 +62,10 @@ add_llvm_library(LLVMScalarOpts
   SimplifyCFGPass.cpp
   Sink.cpp
   SpeculativeExecution.cpp
+  SpeculateAroundPHIs.cpp
   StraightLineStrengthReduce.cpp
   StructurizeCFG.cpp
   TailRecursionElimination.cpp
-  Dependency.cpp
 
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms
