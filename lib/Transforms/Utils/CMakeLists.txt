@@ -10,6 +10,7 @@ add_llvm_library(LLVMTransformUtils
   CloneModule.cpp
   CodeExtractor.cpp
   CtorUtils.cpp
+  Dependency.cpp
   DemoteRegToStack.cpp
   EntryExitInstrumenter.cpp
   EscapeEnumerator.cpp
