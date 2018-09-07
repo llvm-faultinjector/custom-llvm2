@@ -24,27 +24,32 @@
 
 #define DEBUG_TYPE "dependency-check"
 
-/// Dependency check°úÁ¤¿¡¼­ È®ÀÎµÈ inst¸¦ ÄÜ¼Ö¿¡
-/// Ãâ·ÂÇÒ ÁöÀÇ ¿©ºÎ¸¦ °áÁ¤ÇÕ´Ï´Ù.
+/// Dependency checkê³¼ì •ì—ì„œ í™•ì¸ëœ instë¥¼ ì½˜ì†”ì—
+/// ì¶œë ¥í•  ì§€ì˜ ì—¬ë¶€ë¥¼ ê²°ì •í•©ë‹ˆë‹¤.
 #define IDC_PRINT_INSTRUCTION 0
 
-/// Dependency check °á°ú¸¦ Ãâ·ÂÇÒ ÁöÀÇ ¿©ºÎ¸¦ °áÁ¤ÇÕ´Ï´Ù.
+/// Dependency check ê²°ê³¼ë¥¼ ì¶œë ¥í•  ì§€ì˜ ì—¬ë¶€ë¥¼ ê²°ì •í•©ë‹ˆë‹¤.
 #define IDC_PRINT_RESULT 1
 
-/// AnnotateµÈ º¯¼ö°¡ ÀÖ´Â ÇÔ¼ö¸¸ Ãâ·ÂÇÕ´Ï´Ù.
+/// Annotateëœ ë³€ìˆ˜ê°€ ìˆëŠ” í•¨ìˆ˜ë§Œ ì¶œë ¥í•©ë‹ˆë‹¤.
 #define IDC_PRINT_NONCONDITIONAL 1
 
-/// ÇÔ¼ö°¡ Á¤ÀÇµÇÁö ¾ÊÀº °æ¿ì, ÄÜ¼Ö¿¡ ¸Ş½ÃÁö¸¦ Ãâ·ÂÇÕ´Ï´Ù.
+/// í•¨ìˆ˜ê°€ ì •ì˜ë˜ì§€ ì•Šì€ ê²½ìš°, ì½˜ì†”ì— ë©”ì‹œì§€ë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.
 #define IDC_PRINT_MSG_EMPTY_FUNCTION 1
 
-/// ÇÔ¼ö°¡ Á¤ÀÇµÇÁö ¾ÊÀº °æ¿ì, ÇØ´ç ÇÔ¼öÀÇ ÇÔ¼öÀÎÀÚ°¡
-/// ¸®ÅÏ°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö ¿©ºÎ¸¦ °áÁ¤ÇÕ´Ï´Ù.
+/// í•¨ìˆ˜ê°€ ì •ì˜ë˜ì§€ ì•Šì€ ê²½ìš°, í•´ë‹¹ í•¨ìˆ˜ì˜ í•¨ìˆ˜ì¸ìê°€
+/// ë¦¬í„´ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ì—¬ë¶€ë¥¼ ê²°ì •í•©ë‹ˆë‹¤.
 #define IDC_EMPTY_FUNCTION_PARAM_AFFECT_RETURN 1
 
-/// branch mapÀ» ÀÌ¿ëÇÑ °Ë»ç¸¦ ÇÒ ÁöÀÇ ¿©ºÎ¸¦ °áÁ¤ÇÕ´Ï´Ù.
+/// branch mapì„ ì´ìš©í•œ ê²€ì‚¬ë¥¼ í•  ì§€ì˜ ì—¬ë¶€ë¥¼ ê²°ì •í•©ë‹ˆë‹¤.
 #define IDC_SCAN_CONTROL_FLOW 1
 
 using namespace llvm;
+
+void DependencyInstrInfoManager::addInfo(DependencyInstrInfo *info)
+{
+  vec.push_back(info);
+}
 
 /*
   Same name function have same algorithm.
@@ -245,11 +250,11 @@ public:
   void setArgumentDependency(int ix) { argument_dependency[ix] = true; }
 };
 
-/// ÀÌ Å¬·¡½º´Â ´ÙÀ½°ú °°Àº ¼¼ °¡Áö Á¤º¸¸¦ °¡Áö°í ÀÖ½À´Ï´Ù.
-/// 1. ÇÔ¼öÀÎÀÚ°¡ ¹İÈ¯°ª¿¡ ¹ÌÄ¡´Â ¿µÇâ
-/// 2. ÇÔ¼öÀÎÀÚ°¡ ¾î¶² ÇÔ¼öÀÎÀÚ¿¡ ¹ÌÄ¡´Â ¿µÇâ
-/// 3. À§ µÎ°¡Áö Áß ÇÑ °³ ÀÌ»óÀÇ °æ¿ì¿¡¼­ ¿µÇâÀ» ¹ÌÄ¡´Â
-///    È£ÃâµÇ´Â ÇÔ¼öµéÀÇ ¸ñ·Ï
+/// ì´ í´ë˜ìŠ¤ëŠ” ë‹¤ìŒê³¼ ê°™ì€ ì„¸ ê°€ì§€ ì •ë³´ë¥¼ ê°€ì§€ê³  ìˆìŠµë‹ˆë‹¤.
+/// 1. í•¨ìˆ˜ì¸ìê°€ ë°˜í™˜ê°’ì— ë¯¸ì¹˜ëŠ” ì˜í–¥
+/// 2. í•¨ìˆ˜ì¸ìê°€ ì–´ë–¤ í•¨ìˆ˜ì¸ìì— ë¯¸ì¹˜ëŠ” ì˜í–¥
+/// 3. ìœ„ ë‘ê°€ì§€ ì¤‘ í•œ ê°œ ì´ìƒì˜ ê²½ìš°ì—ì„œ ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”
+///    í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜ë“¤ì˜ ëª©ë¡
 class FunctionDependency {
   Function *function;
   std::vector<bool> return_dependency;
@@ -283,11 +288,11 @@ public:
 
   Function *getFunction() { return function; }
 
-  /// ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â ÇÔ¼öÀÎÀÚ¸¦ ¾Ë¾Æº¼ ¼ö ÀÖ½À´Ï´Ù.
+  /// ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” í•¨ìˆ˜ì¸ìë¥¼ ì•Œì•„ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
   bool hasReturnDependency(int ix) { return return_dependency[ix]; }
   void setReturnDependency(int ix) { return_dependency[ix] = true; }
 
-  /// ¾î¶² ÇÔ¼öÀÎÀÚ°¡ Æ¯Á¤ ÇÔ¼öÀÎÀÚ¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö ¾Ë¾Æº¼ ¼ö ÀÖ½À´Ï´Ù.
+  /// ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ íŠ¹ì • í•¨ìˆ˜ì¸ìì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ì•Œì•„ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
   FunctionArgumentDependency *getFunctionArgumentDependency(size_t i) {
     return arg_dependency[i];
   }
@@ -369,10 +374,10 @@ public:
       return;
     }
 
-    /// ¾î¶² ÇÔ¼öÀÎÀÚ°¡ ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö °Ë»çÇÕ´Ï´Ù.
+    /// ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ê²€ì‚¬í•©ë‹ˆë‹¤.
     FunctionReturnDependencyChecker return_checker(FD, DM);
 
-    /// ¾î¶² ÇÔ¼öÀÎÀÚ°¡ Æ¯Á¤ ÇÔ¼öÀÎÀÚ¿¡ ¹ÌÄ¡´Â ¿µÇâÀ» °Ë»çÇÕ´Ï´Ù.
+    /// ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ íŠ¹ì • í•¨ìˆ˜ì¸ìì— ë¯¸ì¹˜ëŠ” ì˜í–¥ì„ ê²€ì‚¬í•©ë‹ˆë‹¤.
     FunctionArgumentDependencyCheck argument_checker(FD, DM);
   }
 
@@ -393,13 +398,13 @@ public:
         for (Instruction &inst : basic_block)
           if (ReturnInst *ri = dyn_cast<ReturnInst>(&inst))
 
-            // ¹İÈ¯°ªÀÌ ¾ø´Â ÇÔ¼öÀÇ °æ¿ì getReturnValue°¡ void(nullptr)ÀÔ´Ï´Ù.
+            // ë°˜í™˜ê°’ì´ ì—†ëŠ” í•¨ìˆ˜ì˜ ê²½ìš° getReturnValueê°€ void(nullptr)ì…ë‹ˆë‹¤.
             //   ret void
             if (ri->getReturnValue()) {
 
-              // ¹İÈ¯µÇ´Â ³»¿ëÀº ¹İµå½Ã ReturnInst¸¦ °ÅÃÄ¾ßµË´Ï´Ù. µû¶ó¼­
-              // ReturnInstÀÇ Operand¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â °ÍµéÀ» Â÷·Ê·Î Á¶»çÇÕ´Ï´Ù.
-              // ÀÌ °úÁ¤Àº ÇÔ¼ö ³»ºÎ¿¡ ¸ğµç ReturnInst¸¦ Á¶»çÇÕ´Ï´Ù.
+              // ë°˜í™˜ë˜ëŠ” ë‚´ìš©ì€ ë°˜ë“œì‹œ ReturnInstë¥¼ ê±°ì³ì•¼ë©ë‹ˆë‹¤. ë”°ë¼ì„œ
+              // ReturnInstì˜ Operandì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” ê²ƒë“¤ì„ ì°¨ë¡€ë¡œ ì¡°ì‚¬í•©ë‹ˆë‹¤.
+              // ì´ ê³¼ì •ì€ í•¨ìˆ˜ ë‚´ë¶€ì— ëª¨ë“  ReturnInstë¥¼ ì¡°ì‚¬í•©ë‹ˆë‹¤.
               inst_dependency = new InstructionDependency();
               runBottomUp(ri->getReturnValue());
               delete inst_dependency;
@@ -407,9 +412,9 @@ public:
     }
 
   private:
-    /// [Á¤º¸]
-    /// ¾î¶² ÇÔ¼öÀÎÀÚ°¡ V¿¡ ¿µÇâÀ» ¹ÌÄ¡´ÂÁö °Ë»çÇÕ´Ï´Ù. ÀÌ °úÁ¤Àº
-    /// Àç±ÍÀûÀ¸·Î ÁøÇàµË´Ï´Ù.
+    /// [ì •ë³´]
+    /// ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ Vì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ”ì§€ ê²€ì‚¬í•©ë‹ˆë‹¤. ì´ ê³¼ì •ì€
+    /// ì¬ê·€ì ìœ¼ë¡œ ì§„í–‰ë©ë‹ˆë‹¤.
     void runBottomUp(Value *V, bool P = true) {
       if (Argument *arg = dyn_cast<Argument>(V)) {
         function_dependency->setReturnDependency(arg->getArgNo());
@@ -426,9 +431,9 @@ public:
 
         inst_dependency->addInstruction(inst, P);
 
-        // PHINode¿Í ±âÅ¸ InstructionÀº Operand¿¡ Á¢±ÙÇÏ´Â ¹æ¹ıÀÌ ´Ù¸¨´Ï´Ù.
-        // µû¶ó¼­ µÎ °¡Áö ºĞ¸®ÇÏ¿© °Ë»çÇÏ¿´½À´Ï´Ù.
-        // ´Ù¸¥ Á¢±Ù ¹æ¹ıÀ» °¡Áø InstructionÀº ¿©±â¼­ Æ¯¼öÈ­ ÇØ¾ßÇÕ´Ï´Ù.
+        // PHINodeì™€ ê¸°íƒ€ Instructionì€ Operandì— ì ‘ê·¼í•˜ëŠ” ë°©ë²•ì´ ë‹¤ë¦…ë‹ˆë‹¤.
+        // ë”°ë¼ì„œ ë‘ ê°€ì§€ ë¶„ë¦¬í•˜ì—¬ ê²€ì‚¬í•˜ì˜€ìŠµë‹ˆë‹¤.
+        // ë‹¤ë¥¸ ì ‘ê·¼ ë°©ë²•ì„ ê°€ì§„ Instructionì€ ì—¬ê¸°ì„œ íŠ¹ìˆ˜í™” í•´ì•¼í•©ë‹ˆë‹¤.
         if (PHINode *phi = dyn_cast<PHINode>(inst)) {
           for (unsigned i = 0; i < phi->getNumIncomingValues(); i++) {
             Value *target_value = phi->getIncomingValue(i);
@@ -437,12 +442,12 @@ public:
           }
         } else if (CallInst *ci = dyn_cast<CallInst>(inst)) {
 
-          // ¾î¶² ÇÔ¼öÀÎÀÚ°¡ ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¨´Ï±î?
+          // ì–´ë–¤ í•¨ìˆ˜ì¸ìê°€ ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹©ë‹ˆê¹Œ?
           FunctionDependency *depends;
           if (!(depends = processCallInst(ci)))
             return;
 
-          // ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â ¸ğµç ÇÔ¼öÀÎÀÚµéÀº V¿¡ ¿µÇâÀ» ¹ÌÄ¡°Ô µË´Ï´Ù.
+          // ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” ëª¨ë“  í•¨ìˆ˜ì¸ìë“¤ì€ Vì— ì˜í–¥ì„ ë¯¸ì¹˜ê²Œ ë©ë‹ˆë‹¤.
           for (size_t i = 0; i < ci->getCalledFunction()->arg_size(); i++)
             if (depends->hasReturnDependency(i) == true) {
               runBottomUp(ci->getOperand(i), P);
@@ -462,14 +467,14 @@ public:
       }
     }
 
-    /// [Á¤º¸]
-    /// CallInst¿¡ ÀÇÇØ È£ÃâµÈ ÇÔ¼öÀÇ Dependency¸¦ °¡Á®¿É´Ï´Ù.
+    /// [ì •ë³´]
+    /// CallInstì— ì˜í•´ í˜¸ì¶œëœ í•¨ìˆ˜ì˜ Dependencyë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
     ///
-    /// [º¸Ãæ]
-    /// - callinst¸¦ ¸¸³µÀ» °æ¿ì ´ÙÀ½°ú °°Àº µÎ °¡Áö ¿µÇâÀ» ºĞ¼®ÇÕ´Ï´Ù.
-    ///   1. ¹İÈ¯°ª¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â ÇÔ¼öÀÎÀÚµéÀÇ ¸ñ·Ï
-    ///   2. Æ÷ÀÎÅÍ ÇÔ¼öÀÎÀÚ¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â ÇÔ¼öÀÎÀÚµéÀÇ ¸ñ·Ï
-    /// - ÀÌ ÇÔ¼ö¿Í µ¿ÀÏÇÑ ÀÌ¸§À» °®´Â ÇÔ¼ö´Â ¸ğµÎ °°Àº ±â´ÉÀ» °¡Áı´Ï´Ù.
+    /// [ë³´ì¶©]
+    /// - callinstë¥¼ ë§Œë‚¬ì„ ê²½ìš° ë‹¤ìŒê³¼ ê°™ì€ ë‘ ê°€ì§€ ì˜í–¥ì„ ë¶„ì„í•©ë‹ˆë‹¤.
+    ///   1. ë°˜í™˜ê°’ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” í•¨ìˆ˜ì¸ìë“¤ì˜ ëª©ë¡
+    ///   2. í¬ì¸í„° í•¨ìˆ˜ì¸ìì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” í•¨ìˆ˜ì¸ìë“¤ì˜ ëª©ë¡
+    /// - ì´ í•¨ìˆ˜ì™€ ë™ì¼í•œ ì´ë¦„ì„ ê°–ëŠ” í•¨ìˆ˜ëŠ” ëª¨ë‘ ê°™ì€ ê¸°ëŠ¥ì„ ê°€ì§‘ë‹ˆë‹¤.
     FunctionDependency *processCallInst(CallInst *CI) {
       FunctionDependency *depends = nullptr;
       Function *target_function = CI->getCalledFunction();
@@ -489,8 +494,8 @@ public:
       return depends;
     }
 
-    /// [Á¤º¸]
-    /// V°¡ ¼ÓÇÑ ºí·Ï¿¡ ¿µÇâÀ» ¹ÌÄ¡´Â ºí·ÏÀ» Ã£½À´Ï´Ù.
+    /// [ì •ë³´]
+    /// Vê°€ ì†í•œ ë¸”ë¡ì— ì˜í–¥ì„ ë¯¸ì¹˜ëŠ” ë¸”ë¡ì„ ì°¾ìŠµë‹ˆë‹¤.
     void processBranches(Value *V) {
 #if IDC_SCAN_CONTROL_FLOW
       if (Instruction *inst = dyn_cast<Instruction>(V)) {
@@ -516,22 +521,22 @@ public:
       }
     }
 
-    /// [Á¤º¸]
-    /// Nodeµû¶ó°¡±â¿¡¼­ Ã£Áö¸øÇÏ´Â Æ¯Á¤ º¯¼öÀÇ Dependency¸¦ ºĞ¼®ÇÏ±â À§ÇØ
-    /// ¸î °¡Áö Á¶°ÇÀ» °Ë»çÇÕ´Ï´Ù. ÀÌ ´Ü°è¿¡¼± [º¸Ãæ]°æ¿ì¿¡¼­ÀÇ Dependency¸¦
-    /// ¿¹»óÇÒ »Ó È®½ÅÀ» ÇÒ ¼ö´Â ¾ø½À´Ï´Ù.
+    /// [ì •ë³´]
+    /// Nodeë”°ë¼ê°€ê¸°ì—ì„œ ì°¾ì§€ëª»í•˜ëŠ” íŠ¹ì • ë³€ìˆ˜ì˜ Dependencyë¥¼ ë¶„ì„í•˜ê¸° ìœ„í•´
+    /// ëª‡ ê°€ì§€ ì¡°ê±´ì„ ê²€ì‚¬í•©ë‹ˆë‹¤. ì´ ë‹¨ê³„ì—ì„  [ë³´ì¶©]ê²½ìš°ì—ì„œì˜ Dependencyë¥¼
+    /// ì˜ˆìƒí•  ë¿ í™•ì‹ ì„ í•  ìˆ˜ëŠ” ì—†ìŠµë‹ˆë‹¤.
     ///
-    /// [º¸Ãæ]
-    /// - ÇöÀç±îÁö ´ÙÀ½°ú °°Àº ¼¼ °¡Áö °æ¿ì¿¡¼­¸¸ º¯¼ö¸¦ º¯°æµÉ ¼ö ÀÖÀ½À»
-    ///   È®ÀÎÇß½À´Ï´Ù.
-    ///   1. StoreInst: StoreInst´Â register¿¡ °ªÀ» ¾²´Â ¿ªÇÒÀ» ´ã´çÇÕ´Ï´Ù.
-    ///      µû¶ó¼­ StoreInstÀÇ Pointer°¡ Ã£À¸·Á´Â º¯¼öÀÏ °æ¿ì¸¦ È®ÀÎÇÕ´Ï´Ù.
-    ///   2. LoadInst: LoadInstÀÇ Pointer°¡ Ã£À¸·Á´Â º¯¼öÀÏ °æ¿ì, LoadInst
-    ///      ±× ÀÚÃ¼°¡ ÇØ´ç º¯¼ö¸¦ ´ã´çÇÒ ¼ö ÀÖ½À´Ï´Ù.
-    ///   3. CallInst: Ã£À¸·Á´Â º¯¼ö°¡ Æ÷ÀÎÅÍÇüÅÂÀÇ ÇÔ¼öÀÎÀÚ·Î ¾î¶² ÇÔ¼ö¿¡
-    ///   ³Ñ°ÜÁö´Â
-    ///      °æ¿ì ÇØ´ç ÇÔ¼öÀÇ ´Ù¸¥ ÇÔ¼öÀÎÀÚµéÀÌ ÀÌ º¯¼ö¿¡ ¿µÇâÀ» ¹ÌÄ¥ ¼ö
-    ///      ÀÖ½À´Ï´Ù.
+    /// [ë³´ì¶©]
+    /// - í˜„ì¬ê¹Œì§€ ë‹¤ìŒê³¼ ê°™ì€ ì„¸ ê°€ì§€ ê²½ìš°ì—ì„œë§Œ ë³€ìˆ˜ë¥¼ ë³€ê²½ë  ìˆ˜ ìˆìŒì„
+    ///   í™•ì¸í–ˆìŠµë‹ˆë‹¤.
+    ///   1. StoreInst: StoreInstëŠ” registerì— ê°’ì„ ì“°ëŠ” ì—­í• ì„ ë‹´ë‹¹í•©ë‹ˆë‹¤.
+    ///      ë”°ë¼ì„œ StoreInstì˜ Pointerê°€ ì°¾ìœ¼ë ¤ëŠ” ë³€ìˆ˜ì¼ ê²½ìš°ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.
+    ///   2. LoadInst: LoadInstì˜ Pointerê°€ ì°¾ìœ¼ë ¤ëŠ” ë³€ìˆ˜ì¼ ê²½ìš°, LoadInst
+    ///      ê·¸ ìì²´ê°€ í•´ë‹¹ ë³€ìˆ˜ë¥¼ ë‹´ë‹¹í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+    ///   3. CallInst: ì°¾ìœ¼ë ¤ëŠ” ë³€ìˆ˜ê°€ í¬ì¸í„°í˜•íƒœì˜ í•¨ìˆ˜ì¸ìë¡œ ì–´ë–¤ í•¨ìˆ˜ì—
+    ///   ë„˜ê²¨ì§€ëŠ”
+    ///      ê²½ìš° í•´ë‹¹ í•¨ìˆ˜ì˜ ë‹¤ë¥¸ í•¨ìˆ˜ì¸ìë“¤ì´ ì´ ë³€ìˆ˜ì— ì˜í–¥ì„ ë¯¸ì¹  ìˆ˜
+    ///      ìˆìŠµë‹ˆë‹¤.
     void runSearch(Value *V, bool P = true) {
       for (BasicBlock &basic_block : *function)
         for (Instruction &inst : basic_block) {
@@ -614,11 +619,11 @@ public:
       }
     }
 
-    /// [Á¤º¸]
-    /// °Ë»çÇÏ·Á´Â ÇÔ¼öÀÎÀÚ A¿Í °°Àº V°¡ ÀÖ´ÂÁö Àç±ÍÀûÀ¸·Î °Ë»çÇÕ´Ï´Ù.
-    /// ÀÌ ÇÔ¼ö´Â runBottomUp°ú runSearch¸¦ ÇÕÇÑ ÇüÅÂ¸¦ °¡Áı´Ï´Ù.
+    /// [ì •ë³´]
+    /// ê²€ì‚¬í•˜ë ¤ëŠ” í•¨ìˆ˜ì¸ì Aì™€ ê°™ì€ Vê°€ ìˆëŠ”ì§€ ì¬ê·€ì ìœ¼ë¡œ ê²€ì‚¬í•©ë‹ˆë‹¤.
+    /// ì´ í•¨ìˆ˜ëŠ” runBottomUpê³¼ runSearchë¥¼ í•©í•œ í˜•íƒœë¥¼ ê°€ì§‘ë‹ˆë‹¤.
     ///
-    /// [º¸Ãæ]
+    /// [ë³´ì¶©]
     ///
     void runChecker(Argument *A, Value *V, bool P = true) {
       if (Argument *arg = dyn_cast<Argument>(V)) {
@@ -631,12 +636,12 @@ public:
       errs() << "    (" << function->getName() << ")" << *V << "\n";
 #endif
 
-      // ÀÌ ÇÔ¼ö´Â ¹«ÇÑÀç±Í ¼ºÁúÀ» °¡Áö¹Ç·Î Áßº¹°Ë»ç¸¦ ½ÃÇàÇÕ´Ï´Ù.
+      // ì´ í•¨ìˆ˜ëŠ” ë¬´í•œì¬ê·€ ì„±ì§ˆì„ ê°€ì§€ë¯€ë¡œ ì¤‘ë³µê²€ì‚¬ë¥¼ ì‹œí–‰í•©ë‹ˆë‹¤.
       if (std::find(overlap.begin(), overlap.end(), V) != overlap.end())
         return;
       overlap.push_back(V);
 
-      // runSearch ¾Ë°í¸®Áò
+      // runSearch ì•Œê³ ë¦¬ì¦˜
       for (BasicBlock &basic_block : *function)
         for (Instruction &inst : basic_block) {
           if (StoreInst *si = dyn_cast<StoreInst>(&inst)) {
@@ -663,7 +668,7 @@ public:
           }
         }
 
-      // runBottomUp ¾Ë°í¸®Áò
+      // runBottomUp ì•Œê³ ë¦¬ì¦˜
       if (Instruction *inst = dyn_cast<Instruction>(V)) {
 #if IDC_SCAN_CONTROL_FLOW
         BranchManager *bm = function_dependency->getBranchManager();
@@ -922,7 +927,7 @@ private:
       for (Instruction &inst : basic_block) {
         if (CallInst *ci = dyn_cast<CallInst>(&inst)) {
 
-          // ??? ÇÔ¼öÆ÷ÀÎÅÍ·Î ÃßÁ¤µÇ´Â ±¸¹®Àº CalledFunctionÀ» °®Áö ¾ÊÀ½
+          // ??? í•¨ìˆ˜í¬ì¸í„°ë¡œ ì¶”ì •ë˜ëŠ” êµ¬ë¬¸ì€ CalledFunctionì„ ê°–ì§€ ì•ŠìŒ
           //  %5 = tail call i32 bitcast (i32 (...)* @__CxxFrameHandler3 to i32
           //       (i8*, i8*, i8*, i8*, i8*)*)(i8* inreg %4, i8* %0, i8* %1, i8*
           //       %2, i8* %3)
