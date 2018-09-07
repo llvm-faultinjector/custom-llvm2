@@ -104,9 +104,7 @@ namespace llvm {
       vec = tmp;
     }
 
-    void addInfo(DependencyInstrInfo *info) {
-      vec.push_back(info);
-    }
+    void addInfo(DependencyInstrInfo *info);
 
     InfoType::const_iterator begin() const {
       return vec.begin();
