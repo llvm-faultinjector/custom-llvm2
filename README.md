@@ -1,16 +1,13 @@
 # Custom LLVM (Forked from LLVM 6.0.0 Version)
-이 custom-llvm은 IR단계에서 llvm.annotation로 지정된 특정 register의 변수의존성(Dominated, Maybe)를 파악할 목적으로 Forking되었습니다.
-이 프로젝트는 IR단계의 변수의존성을 object파일에서 출력할 수 있도록 도와줄 수 있습니다. 코드의 자세한 변경사항은 Commits를 참고하세요.
-또한 테스트 및 기타 내용에 관해선 develop, test브랜치를 참고하세요.
+This custom-llvm has been forked to determine the variable dependencies (Dominated, Maybe) of the specific register specified by llvm.annotation in the IR step. This project can help you to output variable dependencies of the IR level from an object file(Not yet). See Commits for more details on the code changes. Also refer to the develop and test branches for testing and etcs.
 
 ***
 
-## 1. IR 단계에서의 표현
-[Test 폴더](test/Dependency%20Test)의 b.cpp와 b.ll를 참고하면서 다음 글을 읽어주세요.
+## 1. Representation in the IR stage
+Please read the following article while referring to b.cpp and b.ll. [Test Folder](test/Dependency%20Test) 
 
-### 1.1. llvm.annotation를 이용한 변수 마킹
-`__attribute__((annotate("message")))`는 clang/llvm에서 제공하는 annotation 기능입니다. 이 기능을 사용하면 IR의 최종단계까지 annotate된 변수를
-알 수 있습니다.  또한 annotate된 변수에서 `"message"`에 내용을 알 수 있습니다.
+### 1.1. Variable marking using llvm.annotation
+`__attribute __ ((annotate (" message ")))` is an annotation feature provided by clang / llvm. This function allows you to know the annotated variables until the final stage of IR. You can also see the contents of `" message "` in an annotated variable.
 ``` c++
   int __attribute__((annotate("a"))) a = 0;
 ```
@@ -22,18 +19,16 @@
   call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %1) #2
   call void @llvm.var.annotation(i8* nonnull %1, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str.1, i32 0, i32 0), i32 10)
 ```
-변수 a는 위 C++ 구문을 통해 annotate되었습니다. 밑 IR표현을 보면 `@llvm.var.annotation`라는 함수가 `%1`를 호출하며, `%1`은 `%a`를 
-bitcast하고 있음을 알 수 있습니다. `%a`는 annotate된 변수 a를 가리킵니다. 
-llvm annotation기능을 사용하면 `StoreInst`를 통해 어떤 값이 `%a`에 할당되는지 알 수 있습니다.
+The variable `a` has been annotated via the above C ++ syntax. The following IR representation shows that the function `@ llvm.var.annotation` calls `%1` and that `%1` bitcasts`%a`. `%a` points to the annotated variable a. With the llvm annotation function, `StoreInst` tells which values are assigned to`%a`.
 ``` llvm
   %add4 = add nsw i32 %4, %call
   store i32 %add4, i32* %a, align 4, !tbaa !3
 ```
-위 구문은 `%add4`의 값이 `%a`에 저장되는 모습입니다. 이 기능은 annotate된 모든 변수에서 동작하며, 최적화 단계에서도 사라지지 않습니다.
+The above statement shows that the value of `%add4` is stored in `%a`. This function works on all annotated variables and does not disappear in the optimization phase.
 
-### 1.2. extern 함수를 이용한 변수 마킹
-`llvm.annotation`을 이용한 변수 마킹 테스트 중 최대최적화시 일부 상황에서 마킹이 없어지는 현상을 발견했습니다.
-변수 자체를 마킹할 다른 방법을 찾지 못했으나, 변수 변경과정에서 사용되는 가상레지스터를 본체가 없는 함수를 호출해 찾을 수 있었습니다.
+### 1.2. Variable marking via extern function
+When variable marking using `llvm.annotation`, I found that marking disappears in some situations during maximum optimization on testing.
+We could not find another way to mark the variable itself, but we could find the virtual register used in the process of changing the variable by calling the bodyless function.
 ``` c++
 #define ANNORATE(msg) __attribute__((annotate(msg)))
 extern void __my__annotate(void *);
@@ -56,9 +51,9 @@ void SHA256_Mixing(SHA_PULONG indexs, SHA_PULONG outdexs)
     SHA_256_XROLL(a, b, c, d, e, f, g, h, t1, t2);
   }
 ```
-위 t1이 마킹되었지만 -O2최적화에선 annotation이 남지 않습니다. extern함수를 이용하면 다음과 같은 결과를 .ll파일에서 얻을 수 있습니다.
+The above t1 is marked, but no annotation is left in -O2 optimization. With the extern function, you can get the following results from the .ll file:
 ``` llvm
-  ; 적용전
+  ; Before
 for.body73:                                       ; preds = %for.body73, %for.end62
   %add112215 = phi i32 [ %26, %for.end62 ], [ %add112, %for.body73 ]
   %i.2214 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
@@ -76,7 +71,7 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %shl78 = shl i32 %e.0210, 21
   ...
 
-  ; 적용후
+  ; After
 for.body73:                                       ; preds = %for.body73, %for.end62
   %t1.0216 = phi i32 [ undef, %for.end62 ], [ %add93, %for.body73 ]
   %h.0215 = phi i32 [ %31, %for.end62 ], [ %g.0214, %for.body73 ]
@@ -88,7 +83,7 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %b.0209 = phi i32 [ %25, %for.end62 ], [ %35, %for.body73 ]
   %i.2208 = phi i32 [ 0, %for.end62 ], [ %inc114, %for.body73 ]
   %32 = inttoptr i32 %t1.0216 to i8*
-  ; extern함수가 호출됨
+  ; extern function called
   call void @__my__annotate(i8* %32) #2
   %shr74 = lshr i32 %e.0212, 6
   %shl75 = shl i32 %e.0212, 26
@@ -96,37 +91,37 @@ for.body73:                                       ; preds = %for.body73, %for.en
   %shr77 = lshr i32 %e.0212, 11
   %shl78 = shl i32 %e.0212, 21
 ```
-이와 같이 extern 함수로 마킹할 경우 해당 함수의 인자의 마킹 종류는 아래에서 설명할 `Annotated`마킹이 됩니다.
-사용된 extern 함수는 `eraseFromParent`를 통해 llc에서 삭제됩니다.
+Like this, when marking with extern function, the kind of marking of argument of function is marked as `Annotated` which will be described below.
+The extern function used is removed from llc processing via `eraseFromParent`.
 
 ***
 
 ## 2. Dependency Pass
-이 패스는 변수의 의존성을 Instruction에 마킹하기 위한 패스입니다. 최적화단계가 아닌 SDNode 생성 직전에 각 함수당 한 번씩 실행됩니다.
-이 [링크](https://github.com/rollrat/custom-llvm2/commit/583681378edf38a3d837135f9815c621c3021590#diff-825e43e63961002d7541aec6d4d4f7a4R468)
-는 위 과정을 나타냅니다. `SelectAllBasicBlocks`에 의한 SDNode 생성 직전 `c->runOnFunction`을 통해 마킹을 진행하는 것을 알 수 있습니다.
+This is the pass to mark the dependency of the variable in the Instruction. It is executed once for each function just before the SDNode generation, not the optimization step.
+This [link](https://github.com/rollrat/custom-llvm2/commit/583681378edf38a3d837135f9815c621c3021590#diff-825e43e63961002d7541aec6d4d4f7a4R468)
+Indicates the above procedure. You can know that `c-> runOnFunction` immediately precedes the creation of the SDNode by` SelectAllBasicBlocks`.
 
-다음 링크의 소스는 Dependency Pass의 전문입니다.
+The source of the following links is a full source code of Dependency Pass.
 ```
 https://github.com/rollrat/custom-llvm2/blob/master/include/llvm/DependencyInfo.h
 https://github.com/rollrat/custom-llvm2/blob/master/lib/Transforms/Scalar/Dependency.cpp
 ```
 
-다음 링크는 custom-llvm 레포지토리를 만들기 전 pass를 개발했던 git 링크입니다.
+The following link is the git link that developed the pass before creating the custom-llvm repository.
 ```
 https://github.com/rollrat/llvm-control-pass
 ```
 
-### 2.1. Instruction 마킹 종류
-다음 네 가지 항목은 Dependency Pass가 `Instruction`을 마킹하는 종류입니다.
+### 2.1. Instruction Marking Type
+The following 4 items are marking type on Dependency Pass.
 ```
-Annotated : StoreInst가 대입하는 Instruction을 나타냅니다.
-Perpect : 완전하게 연결된 Instruction을 나타냅니다. 
-Dominated : Perpect를 포함하며, 상위 BasicBlock과 연결된 branch를 변화시키는 Instruction도 포함됩니다.
+Annotated : Instruction to be substituted by StoreInst.
+Perpect : A fully connected Instruction.
+Dominated : Includes Perpect, and includes instructions to change the branch associated with the parent BasicBlock.
 Maybe : Dominated를 포함하며, 연결된 모든 BasicBlock에 관해서 이 BB의 branch를 변화시키는 모든 Instruction도 포함됩니다.
 ```
-`Annotated` >> `Perpect` >> `Dominated` >> `Maybe`순으로 우선순위가 결정됩니다. 
-가령, Annotated마킹이된 `Instruction`은 `Maybe`마킹을 포함합니다.
+`Annotated` >> `Perpect` >> `Dominated` >> `Maybe` Priority is determined in that order.
+For example, `Instruction` with `Annotated` marking includes `Maybe` marking.
 
 ### 2.2. Branch Map
 Branch Map은 Function BasicBlock의 Control-Flow-Graph입니다. 이것은 Dominated와 Maybe를 구별할 때 사용됩니다. 
